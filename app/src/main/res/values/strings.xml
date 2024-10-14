@@ -1,3 +1,15 @@
 <resources>
+
     <string name="app_name">ThatWord</string>
+
+    <!-- MainDrawer -->
+    <string name="app_icon">App icon</string>
+    <string name="screen_translate">Screen Translate</string>
+    <string name="screen_translate_icon">Screen Translate icon</string>
+    <string name="translate">Translate</string>
+    <string name="translate_icon">Translate icon</string>
+
+    <!-- ScreenTranslateScreen -->
+    <string name="open_drawer">Open Drawer</string>
+
 </resources>
