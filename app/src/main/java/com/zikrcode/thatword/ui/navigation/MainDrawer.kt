@@ -82,7 +82,7 @@ private fun ThatWordIcon(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_that_word_logo),
+            painter = painterResource(R.drawable.ic_that_word_icon),
             contentDescription = stringResource(R.string.app_icon),
             modifier = Modifier
                 .size(100.dp)
