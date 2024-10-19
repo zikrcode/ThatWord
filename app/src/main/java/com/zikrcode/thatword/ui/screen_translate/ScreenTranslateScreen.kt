@@ -11,13 +11,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
 import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.utils.Permission
+import com.zikrcode.thatword.ui.utils.composables.AppAlertDialog
 
 @Composable
 fun ScreenTranslateScreen(openDrawer: () -> Unit) {
@@ -34,6 +44,18 @@ fun ScreenTranslateScreenContentPreview() {
 
 @Composable
 private fun ScreenTranslateScreenContent(openDrawer: () -> Unit) {
+    val context = LocalContext.current
+    var hasDrawOverlayPermission by remember {
+        // initial value is false because we will set it ON_RESUME
+        mutableStateOf(false)
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        hasDrawOverlayPermission = Permission.checkDrawOverlayPermission(context)
+    }
+    var requestDrawOverlayPermission by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         topBar = {
             ScreenTranslateTopBar(openDrawer)
@@ -46,7 +68,29 @@ private fun ScreenTranslateScreenContent(openDrawer: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "ScreenTranslateScreenContent")
+            CircularPowerButton(
+                text = stringResource(R.string.off),
+                onClick = {
+                    if (hasDrawOverlayPermission) {
+                        // do something
+                    } else {
+                        requestDrawOverlayPermission = true
+                    }
+                }
+            )
+        }
+        if (requestDrawOverlayPermission) {
+            AppAlertDialog(
+                title = stringResource(R.string.draw_overlay_permission_request_title),
+                text = stringResource(R.string.draw_overlay_permission_request_text),
+                confirmButtonText = stringResource(R.string.ok),
+                onConfirmClick = {
+                    Permission.requestDrawOverlayPermission(context)
+                    requestDrawOverlayPermission = false
+                },
+                dismissButtonText = stringResource(R.string.cancel),
+                onDismissClick = { requestDrawOverlayPermission = false }
+            )
         }
     }
 }

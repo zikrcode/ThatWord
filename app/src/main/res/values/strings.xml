@@ -11,5 +11,22 @@
 
     <!-- ScreenTranslateScreen -->
     <string name="open_drawer">Open Drawer</string>
+    <string name="power_toggle">Power toggle</string>
+    <string name="draw_overlay_permission_request_title">
+        Allow Permission to Display Over Other Apps
+    </string>
+    <string name="draw_overlay_permission_request_text">
+        ThatWord requires permission to display content over other apps.This is necessary to provide
+        key features, such as showing a button to trigger screen translation. Please enable this
+        permission in the settings to continue.
+    </string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="off">Off</string>
+    <string name="on">On</string>
+
+    <!-- *************************************************************************************** -->
+
+    <!-- AppAlertDialog -->
 
 </resources>
