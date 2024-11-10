@@ -27,6 +27,13 @@
 
     <!-- *************************************************************************************** -->
 
-    <!-- AppAlertDialog -->
+    <!-- ScreenTranslateService -->
+    <string name="screen_translate_channel_name">Screen Translate</string>
+
+    <!-- *************************************************************************************** -->
+
+    <!-- overlay_view.xml -->
+    <string name="close">Close</string>
+    <string name="move">Move</string>
 
 </resources>

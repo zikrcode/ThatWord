@@ -1,5 +1,7 @@
 package com.zikrcode.thatword.ui.screen_translate
 
+import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,13 +26,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.service.ScreenTranslateService
 import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
 import com.zikrcode.thatword.ui.theme.ThatWordTheme
-import com.zikrcode.thatword.ui.utils.Permission
+import com.zikrcode.thatword.ui.utils.Permissions
+import com.zikrcode.thatword.ui.utils.RequestPermission
 import com.zikrcode.thatword.ui.utils.composables.AppAlertDialog
 
 @Composable
 fun ScreenTranslateScreen(openDrawer: () -> Unit) {
+
+    // request for notifications permission from Android 13 (API level 33) onwards
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val context = LocalContext.current
+        val permission = android.Manifest.permission.POST_NOTIFICATIONS
+
+        if (!Permissions.checkPermission(context, permission)) {
+            RequestPermission(
+                permission = android.Manifest.permission.POST_NOTIFICATIONS,
+                onResult = {
+                    /*
+                    we can safely ignore the result because app functions properly even
+                    without notifications permission
+                     */
+                }
+            )
+        }
+    }
+
     ScreenTranslateScreenContent(openDrawer)
 }
 
@@ -50,7 +73,7 @@ private fun ScreenTranslateScreenContent(openDrawer: () -> Unit) {
         mutableStateOf(false)
     }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        hasDrawOverlayPermission = Permission.checkDrawOverlayPermission(context)
+        hasDrawOverlayPermission = Permissions.checkDrawOverlayPermission(context)
     }
     var requestDrawOverlayPermission by remember {
         mutableStateOf(false)
@@ -72,7 +95,8 @@ private fun ScreenTranslateScreenContent(openDrawer: () -> Unit) {
                 text = stringResource(R.string.off),
                 onClick = {
                     if (hasDrawOverlayPermission) {
-                        // do something
+                        val intent = Intent(context, ScreenTranslateService::class.java)
+                        context.startForegroundService(intent)
                     } else {
                         requestDrawOverlayPermission = true
                     }
@@ -85,7 +109,7 @@ private fun ScreenTranslateScreenContent(openDrawer: () -> Unit) {
                 text = stringResource(R.string.draw_overlay_permission_request_text),
                 confirmButtonText = stringResource(R.string.ok),
                 onConfirmClick = {
-                    Permission.requestDrawOverlayPermission(context)
+                    Permissions.requestDrawOverlayPermission(context)
                     requestDrawOverlayPermission = false
                 },
                 dismissButtonText = stringResource(R.string.cancel),

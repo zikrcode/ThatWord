@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.utils
+package com.zikrcode.thatword.utils
 
 import androidx.compose.ui.unit.dp
 
