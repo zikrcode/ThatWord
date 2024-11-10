@@ -2,11 +2,17 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 
-    // ComposeCompilerPlugin
+    // Compose Compiler Plugin
     alias(libs.plugins.compose.compiler.plugin)
 
-    // KotlinSerializationPlugin
+    // Kotlin Serialization Plugin
     alias(libs.plugins.kotlin.serialization.plugin)
+
+    // KSP (Kotlin Symbol Processing)
+    alias(libs.plugins.ksp.plugin)
+
+    // Hilt Plugin
+    alias(libs.plugins.hilt.plugin)
 }
 
 android {
@@ -81,4 +87,8 @@ dependencies {
 
     // Lifecycle Service
     implementation(libs.androidx.lifecycle.service)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }

@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.service.ScreenTranslateService
 import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
 import com.zikrcode.thatword.ui.theme.ThatWordTheme
 import com.zikrcode.thatword.ui.utils.Permissions

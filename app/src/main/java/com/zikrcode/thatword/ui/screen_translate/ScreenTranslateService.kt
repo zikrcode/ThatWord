@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.service
+package com.zikrcode.thatword.ui.screen_translate
 
 import android.app.Notification
 import android.content.Intent
@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.service.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.ui.utils.composables.AppOverlayView
 import com.zikrcode.thatword.utils.AppConstants

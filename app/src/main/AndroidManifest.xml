@@ -31,7 +31,7 @@
         </activity>
 
         <service
-            android:name=".service.ScreenTranslateService"
+            android:name=".ui.screen_translate.ScreenTranslateService"
             android:foregroundServiceType="specialUse"
             android:exported="false">
             <property
