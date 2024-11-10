@@ -37,7 +37,7 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="
-                    Displays a overlay view for quick access to screen translation,
+                    Displays an overlay view for quick access to screen translation,
                     enabling users to translate content without leaving their current app.
                 "
             />
