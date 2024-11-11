@@ -16,6 +16,8 @@ accompanistPermissions = "0.36.0"
 lifecycleService = "2.8.7"
 ksp = "2.0.21-1.0.25"
 hilt = "2.52"
+hiltNavigationCompose = "1.2.0"
+lifecycleUtilitiesCompose = "2.8.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +41,8 @@ accompanist-permissions = { group = "com.google.accompanist", name = "accompanis
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleUtilitiesCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

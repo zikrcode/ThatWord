@@ -17,8 +17,8 @@
     </string>
     <string name="draw_overlay_permission_request_text">
         ThatWord requires permission to display content over other apps.This is necessary to provide
-        key features, such as showing a button to trigger screen translation. Please enable this
-        permission in the settings to continue.
+        key features, such as showing an overlay view to toggle screen translation. Please enable
+        this permission in the settings to continue.
     </string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>

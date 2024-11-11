@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.service
+package com.zikrcode.thatword.utils.service
 
 import android.content.Intent
 import android.graphics.PixelFormat

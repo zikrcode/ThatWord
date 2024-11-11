@@ -1,5 +1,6 @@
 package com.zikrcode.thatword.ui.screen_translate.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +30,7 @@ import com.zikrcode.thatword.utils.Dimens
 fun CircularPowerButton(
     text: String,
     onClick: () -> Unit,
+    mainColor: Color = Color.Unspecified,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -38,7 +41,11 @@ fun CircularPowerButton(
                 elevation = Dimens.ElevationSingleHalf,
                 shape = CircleShape
             ),
-        shape = CircleShape
+        shape = CircleShape,
+        border = BorderStroke(
+            width = 2.dp,
+            color = mainColor
+        )
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -49,7 +56,7 @@ fun CircularPowerButton(
                 painter = painterResource(R.drawable.ic_power),
                 contentDescription = stringResource(R.string.power_toggle),
                 modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = mainColor
             )
             Spacer(Modifier.height(Dimens.SpacingSingleHalf))
             Text(
@@ -67,7 +74,8 @@ fun ScreenTranslateScreenContentPreview() {
     ThatWordTheme {
         CircularPowerButton(
             text = "Off",
-            onClick = { }
+            onClick = { },
+            mainColor = Color.Red,
         )
     }
 }

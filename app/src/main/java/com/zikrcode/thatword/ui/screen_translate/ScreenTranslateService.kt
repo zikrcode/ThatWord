@@ -1,6 +1,7 @@
 package com.zikrcode.thatword.ui.screen_translate
 
 import android.app.Notification
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
@@ -9,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.service.OverlayService
+import com.zikrcode.thatword.utils.service.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.ui.utils.composables.AppOverlayView
 import com.zikrcode.thatword.utils.AppConstants
@@ -19,6 +20,9 @@ class ScreenTranslateService : OverlayService() {
 
     companion object {
         private const val SCREEN_TRANSLATE_NOTIFICATION_ID = 100
+
+        fun createIntent(context: Context): Intent =
+            Intent(context, ScreenTranslateService::class.java)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
