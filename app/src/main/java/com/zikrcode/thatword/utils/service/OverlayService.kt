@@ -66,12 +66,7 @@ abstract class OverlayService : LifecycleService(), SavedStateRegistryOwner, Vie
             setViewTreeViewModelStoreOwner(this@OverlayService)
             setViewTreeSavedStateRegistryOwner(this@OverlayService)
             setContent {
-                var offset = remember {
-                    Offset(
-                        x = initialOffset.x,
-                        y = initialOffset.y
-                    )
-                }
+                var offset = remember { initialOffset }
 
                 OverlayView(
                     Modifier
@@ -80,10 +75,7 @@ abstract class OverlayService : LifecycleService(), SavedStateRegistryOwner, Vie
                             detectDragGestures { change, dragAmount ->
                                 change.consume()
 
-                                offset = offset.copy(
-                                    x = offset.x + dragAmount.x,
-                                    y = offset.y + dragAmount.y
-                                )
+                                offset += dragAmount
 
                                 params.apply {
                                     x = offset.x.roundToInt()
@@ -101,9 +93,9 @@ abstract class OverlayService : LifecycleService(), SavedStateRegistryOwner, Vie
     }
 
     @Composable
-    abstract fun OverlayView(modifier: Modifier)
+    protected abstract fun OverlayView(modifier: Modifier)
 
-    abstract fun overlayViewInitialPosition(): Offset
+    protected abstract fun overlayViewInitialPosition(): Offset
 
     override fun onDestroy() {
         super.onDestroy()

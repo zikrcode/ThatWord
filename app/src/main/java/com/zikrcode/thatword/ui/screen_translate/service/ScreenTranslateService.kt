@@ -1,10 +1,14 @@
-package com.zikrcode.thatword.ui.screen_translate
+package com.zikrcode.thatword.ui.screen_translate.service
 
 import android.app.Notification
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.ServiceInfo
+import android.os.Binder
 import android.os.Build
+import android.os.IBinder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +27,20 @@ class ScreenTranslateService : OverlayService() {
 
         fun createIntent(context: Context): Intent =
             Intent(context, ScreenTranslateService::class.java)
+
+        fun bindWithService(
+            onServiceBound: (ScreenTranslateService?) -> Unit
+        ) = object : ServiceConnection {
+
+            override fun onServiceConnected(className: ComponentName, service: IBinder) {
+                val binder = service as ScreenTranslateService.ScreenTranslateBinder
+                onServiceBound(binder.getService())
+            }
+
+            override fun onServiceDisconnected(arg0: ComponentName) {
+                onServiceBound(null)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,9 +80,27 @@ class ScreenTranslateService : OverlayService() {
             }
             .build()
 
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+        return ScreenTranslateBinder()
+    }
+
+    private var stopServiceCallback: (() -> Unit)? = null
+
+    fun setStopServiceCallback(callback: () -> Unit) {
+        stopServiceCallback = callback
+    }
+
     @Composable
     override fun OverlayView(modifier: Modifier) {
-        AppOverlayView(modifier)
+        AppOverlayView(
+            onCloseClick = {
+                stopServiceCallback?.invoke()
+                stopSelf()
+            },
+            onTranslateClick = { TODO() },
+            modifier = modifier
+        )
     }
 
     override fun overlayViewInitialPosition(): Offset {
@@ -72,5 +108,9 @@ class ScreenTranslateService : OverlayService() {
             x = Dimens.SpacingDouble.value.px,
             y = (resources.displayMetrics.heightPixels - 200.dp.value.px) / 2
         )
+    }
+
+    inner class ScreenTranslateBinder : Binder() {
+        fun getService(): ScreenTranslateService = this@ScreenTranslateService
     }
 }

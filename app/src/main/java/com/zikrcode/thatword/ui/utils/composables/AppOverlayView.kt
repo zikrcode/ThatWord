@@ -24,7 +24,11 @@ import com.zikrcode.thatword.ui.theme.ThatWordTheme
 import com.zikrcode.thatword.utils.Dimens
 
 @Composable
-fun AppOverlayView(modifier: Modifier = Modifier) {
+fun AppOverlayView(
+    onCloseClick: () -> Unit,
+    onTranslateClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     OutlinedCard(
         modifier = modifier
             .size(
@@ -44,7 +48,7 @@ fun AppOverlayView(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AppCircleCardWithIcon(
-                onClick = {  },
+                onClick = onCloseClick,
                 iconPainter = painterResource(R.drawable.ic_close),
                 iconContentDescription = stringResource(R.string.close),
                 borderColor = MaterialTheme.colorScheme.error,
@@ -53,7 +57,7 @@ fun AppOverlayView(modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.height(Dimens.SpacingHalf))
             AppCircleCardWithIcon(
-                onClick = {  },
+                onClick = onTranslateClick,
                 iconPainter = painterResource(R.drawable.ic_screen_translate),
                 iconContentDescription = stringResource(R.string.close),
                 borderColor = MaterialTheme.colorScheme.primary,
@@ -77,6 +81,9 @@ fun AppOverlayView(modifier: Modifier = Modifier) {
 @Composable
 fun AppOverlayViewPreview() {
     ThatWordTheme {
-        AppOverlayView()
+        AppOverlayView(
+            onCloseClick = { },
+            onTranslateClick = { }
+        )
     }
 }

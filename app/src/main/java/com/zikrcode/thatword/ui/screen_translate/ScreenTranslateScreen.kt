@@ -66,8 +66,7 @@ fun ScreenTranslateScreen(
         openDrawer = openDrawer,
         refreshServiceStatus = viewModel::refreshServiceStatus,
         isServiceRunning = uiState.isServiceRunning,
-        startService = viewModel::startService,
-        stopService = viewModel::stopService,
+        toggleService = viewModel::toggleService
     )
 }
 
@@ -79,8 +78,7 @@ fun ScreenTranslateScreenContentPreview() {
             openDrawer = { },
             refreshServiceStatus = { },
             isServiceRunning = true,
-            startService = { },
-            stopService = { }
+            toggleService = { }
         )
     }
 }
@@ -90,8 +88,7 @@ private fun ScreenTranslateScreenContent(
     openDrawer: () -> Unit,
     refreshServiceStatus: () -> Unit,
     isServiceRunning: Boolean,
-    startService: () -> Unit,
-    stopService: () -> Unit
+    toggleService: () -> Unit
 ) {
     val context = LocalContext.current
     var hasDrawOverlayPermission by remember {
@@ -124,7 +121,7 @@ private fun ScreenTranslateScreenContent(
                 ),
                 onClick = {
                     if (hasDrawOverlayPermission) {
-                        if (isServiceRunning) stopService() else startService()
+                        toggleService()
                     } else {
                         requestDrawOverlayPermission = true
                     }
