@@ -83,9 +83,6 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
-    // Jetpack Compose Permissions
-    implementation(libs.accompanist.permissions)
-
     // Lifecycle Service
     implementation(libs.androidx.lifecycle.service)
 

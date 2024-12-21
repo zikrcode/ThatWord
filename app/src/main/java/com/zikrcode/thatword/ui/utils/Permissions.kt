@@ -5,12 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.core.content.ContextCompat
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 
 object Permissions {
 
@@ -28,17 +23,7 @@ object Permissions {
         ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun RequestPermission(
-    permission: String,
-    onResult: (Boolean) -> Unit
-) {
-    val permissionState = rememberPermissionState(permission)
-    DisposableEffect(Unit) {
-        permissionState.launchPermissionRequest()
-        onDispose {
-            onResult.invoke(permissionState.status.isGranted)
-        }
-    }
-}
+data class MediaProjectionToken(
+    val resultCode: Int,
+    val resultData: Intent
+)

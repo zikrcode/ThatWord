@@ -1,7 +1,11 @@
 package com.zikrcode.thatword.ui.screen_translate
 
 import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.media.projection.MediaProjectionManager
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +37,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
 import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Permissions
-import com.zikrcode.thatword.ui.utils.RequestPermission
 import com.zikrcode.thatword.ui.utils.composables.AppAlertDialog
 
 @Composable
@@ -41,32 +46,14 @@ fun ScreenTranslateScreen(
     openDrawer: () -> Unit,
     viewModel: ScreenTranslateViewModel = hiltViewModel()
 ) {
-
-    // request for notifications permission from Android 13 (API level 33) onwards
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val context = LocalContext.current
-        val permission = Manifest.permission.POST_NOTIFICATIONS
-
-        if (!Permissions.checkPermission(context, permission)) {
-            RequestPermission(
-                permission = Manifest.permission.POST_NOTIFICATIONS,
-                onResult = {
-                    /*
-                    we can safely ignore the result because app functions properly even
-                    without notifications permission
-                     */
-                }
-            )
-        }
-    }
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ScreenTranslateScreenContent(
         openDrawer = openDrawer,
         refreshServiceStatus = viewModel::refreshServiceStatus,
         isServiceRunning = uiState.isServiceRunning,
-        toggleService = viewModel::toggleService
+        startService = viewModel::startService,
+        stopService = viewModel::stopService
     )
 }
 
@@ -78,7 +65,8 @@ fun ScreenTranslateScreenContentPreview() {
             openDrawer = { },
             refreshServiceStatus = { },
             isServiceRunning = true,
-            toggleService = { }
+            startService = { },
+            stopService = { }
         )
     }
 }
@@ -88,18 +76,23 @@ private fun ScreenTranslateScreenContent(
     openDrawer: () -> Unit,
     refreshServiceStatus: () -> Unit,
     isServiceRunning: Boolean,
-    toggleService: () -> Unit
+    startService: (MediaProjectionToken) -> Unit,
+    stopService: () -> Unit
 ) {
-    val context = LocalContext.current
-    var hasDrawOverlayPermission by remember {
-        // initial value is false because we will set it ON_RESUME
-        mutableStateOf(false)
-    }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        hasDrawOverlayPermission = Permissions.checkDrawOverlayPermission(context)
+        /*
+        refresh service status on every resume to reflect correct ui state
+        e.g. when service is stopped from service overlay view the screen should be
+        turned off without this function the ui state will be set to turned on
+         */
         refreshServiceStatus()
     }
+
+    val context = LocalContext.current
     var requestDrawOverlayPermission by remember {
+        mutableStateOf(false)
+    }
+    var startServiceWithMediaProjection by remember {
         mutableStateOf(false)
     }
 
@@ -120,10 +113,16 @@ private fun ScreenTranslateScreenContent(
                     if (isServiceRunning) R.string.on else R.string.off
                 ),
                 onClick = {
-                    if (hasDrawOverlayPermission) {
-                        toggleService()
-                    } else {
-                        requestDrawOverlayPermission = true
+                    when {
+                        isServiceRunning -> {
+                            stopService()
+                        }
+                        Permissions.checkDrawOverlayPermission(context) -> {
+                            startServiceWithMediaProjection = true
+                        }
+                        else -> {
+                            requestDrawOverlayPermission = true
+                        }
                     }
                 },
                 mainColor = if (isServiceRunning) {
@@ -133,17 +132,24 @@ private fun ScreenTranslateScreenContent(
                 }
             )
         }
+
+        // optional permission
+        PostNotificationPermission()
+
+        // required permission on first launch
         if (requestDrawOverlayPermission) {
-            AppAlertDialog(
-                title = stringResource(R.string.draw_overlay_permission_request_title),
-                text = stringResource(R.string.draw_overlay_permission_request_text),
-                confirmButtonText = stringResource(R.string.ok),
-                onConfirmClick = {
-                    Permissions.requestDrawOverlayPermission(context)
-                    requestDrawOverlayPermission = false
-                },
-                dismissButtonText = stringResource(R.string.cancel),
-                onDismissClick = { requestDrawOverlayPermission = false }
+            DrawOverlayPermission(
+                onActionSelect = { requestDrawOverlayPermission = false }
+            )
+        }
+
+        // special required permission on every launch
+        if (startServiceWithMediaProjection) {
+            MediaProjectionTokenPermission(
+                onResult = { token ->
+                    if (token != null) startService(token)
+                    startServiceWithMediaProjection = false
+                }
             )
         }
     }
@@ -165,4 +171,73 @@ private fun ScreenTranslateTopBar(openDrawer: () -> Unit) {
             }
         }
     )
+}
+
+@Composable
+private fun PostNotificationPermission() {
+    val context = LocalContext.current
+
+    // request for notifications permission from Android 13 (API level 33) onwards
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        && !Permissions.checkPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
+
+        val postNotificationLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = {
+                /*
+                we can safely ignore the result because app functions properly even
+                without notifications permission
+                */
+            }
+        )
+
+        LaunchedEffect(Unit) {
+            postNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+}
+
+@Composable
+private fun DrawOverlayPermission(onActionSelect: () -> Unit) {
+    val context = LocalContext.current
+    AppAlertDialog(
+        title = stringResource(R.string.draw_overlay_permission_request_title),
+        text = stringResource(R.string.draw_overlay_permission_request_text),
+        confirmButtonText = stringResource(R.string.ok),
+        onConfirmClick = {
+            Permissions.requestDrawOverlayPermission(context)
+            onActionSelect.invoke()
+        },
+        dismissButtonText = stringResource(R.string.cancel),
+        onDismissClick = {
+            onActionSelect.invoke()
+        }
+    )
+}
+
+@Composable
+private fun MediaProjectionTokenPermission(onResult: (MediaProjectionToken?) -> Unit, ) {
+    val context = LocalContext.current
+    val mediaProjectionManager = context.getSystemService(MediaProjectionManager::class.java)
+    val mediaProjectionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == RESULT_OK) {
+                onResult.invoke(
+                    MediaProjectionToken(
+                        resultCode = result.resultCode,
+                        resultData = result.data!!
+                    )
+                )
+            } else {
+                onResult.invoke(null)
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        mediaProjectionLauncher.launch(
+            mediaProjectionManager.createScreenCaptureIntent()
+        )
+    }
 }

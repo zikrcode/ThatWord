@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.screen_translate.service.ScreenTranslateService
+import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.utils.extensions.isServiceCurrentlyRunning
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,31 +28,28 @@ class ScreenTranslateViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ScreenTranslateUiState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        refreshServiceStatus()
-    }
-
-    fun toggleService() {
-        val screenTranslateServiceIntent = ScreenTranslateService.createIntent(context)
-
-        if (!_uiState.value.isServiceRunning) { // start service
-            context.startForegroundService(screenTranslateServiceIntent)
-            _uiState.update { state ->
-                state.copy(isServiceRunning = true)
-            }
-            bindService()
-        } else { // stop service
-            if (_uiState.value.isServiceRunning) {
-                context.stopService(screenTranslateServiceIntent)
-                _uiState.update { state ->
-                    state.copy(isServiceRunning = false)
-                }
-            }
-            unbindService()
+    fun startService(mediaProjectionToken: MediaProjectionToken) {
+        val startIntent = ScreenTranslateService.createIntent(
+            context,
+            mediaProjectionToken
+        )
+        context.startForegroundService(startIntent)
+        bindService()
+        _uiState.update { state ->
+            state.copy(isServiceRunning = true)
         }
     }
 
-    private var serviceConnection: ServiceConnection? = null
+    fun stopService() {
+        val stopIntent = ScreenTranslateService.createIntent(context)
+        context.stopService(stopIntent)
+        unbindService()
+        _uiState.update { state ->
+            state.copy(isServiceRunning = false)
+        }
+    }
+
+    private lateinit var serviceConnection: ServiceConnection
 
     private fun bindService() {
         serviceConnection = ScreenTranslateService.bindWithService { service ->
@@ -70,14 +68,12 @@ class ScreenTranslateViewModel @Inject constructor(
         }
         context.bindService(
             ScreenTranslateService.createIntent(context),
-            serviceConnection!!,
+            serviceConnection,
             Context.BIND_AUTO_CREATE
         )
     }
 
-    private fun unbindService() = serviceConnection?.let { connection ->
-        context.unbindService(connection)
-    }
+    private fun unbindService() = context.unbindService(serviceConnection)
 
     fun refreshServiceStatus() {
         val isServiceRunning = context.isServiceCurrentlyRunning(ScreenTranslateService::class.java)

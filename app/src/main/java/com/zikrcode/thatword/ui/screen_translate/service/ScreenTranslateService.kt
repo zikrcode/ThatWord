@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.utils.service.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.ui.utils.composables.AppOverlayView
@@ -24,6 +25,16 @@ class ScreenTranslateService : OverlayService() {
 
     companion object {
         private const val SCREEN_TRANSLATE_NOTIFICATION_ID = 100
+        private const val EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE"
+        private const val EXTRA_PROJECTION_DATA = "EXTRA_PROJECTION_DATA"
+
+        fun createIntent(
+            context: Context,
+            mediaProjectionToken: MediaProjectionToken
+        ): Intent = Intent(context, ScreenTranslateService::class.java).apply {
+            putExtra(EXTRA_RESULT_CODE, mediaProjectionToken.resultCode)
+            putExtra(EXTRA_PROJECTION_DATA, mediaProjectionToken.resultData)
+        }
 
         fun createIntent(context: Context): Intent =
             Intent(context, ScreenTranslateService::class.java)
@@ -47,7 +58,7 @@ class ScreenTranslateService : OverlayService() {
         super.onStartCommand(intent, flags, startId)
         val notification = createNotification()
         val serviceType =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
         } else {
             0
         }
