@@ -28,6 +28,18 @@ class ScreenTranslateViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ScreenTranslateUiState())
     val uiState = _uiState.asStateFlow()
 
+    init {
+        refreshServiceStatus()
+    }
+
+    private fun refreshServiceStatus() {
+        val isServiceRunning = context.isServiceCurrentlyRunning(ScreenTranslateService::class.java)
+        _uiState.update { state ->
+            state.copy(isServiceRunning = isServiceRunning)
+        }
+        if (isServiceRunning) bindService()
+    }
+
     fun startService(mediaProjectionToken: MediaProjectionToken) {
         val startIntent = ScreenTranslateService.createIntent(
             context,
@@ -75,10 +87,5 @@ class ScreenTranslateViewModel @Inject constructor(
 
     private fun unbindService() = context.unbindService(serviceConnection)
 
-    fun refreshServiceStatus() {
-        val isServiceRunning = context.isServiceCurrentlyRunning(ScreenTranslateService::class.java)
-        _uiState.update { state ->
-            state.copy(isServiceRunning = isServiceRunning)
-        }
-    }
+    override fun onCleared() = unbindService()
 }

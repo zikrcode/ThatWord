@@ -31,8 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
@@ -50,7 +48,6 @@ fun ScreenTranslateScreen(
 
     ScreenTranslateScreenContent(
         openDrawer = openDrawer,
-        refreshServiceStatus = viewModel::refreshServiceStatus,
         isServiceRunning = uiState.isServiceRunning,
         startService = viewModel::startService,
         stopService = viewModel::stopService
@@ -63,7 +60,6 @@ fun ScreenTranslateScreenContentPreview() {
     ThatWordTheme {
         ScreenTranslateScreenContent(
             openDrawer = { },
-            refreshServiceStatus = { },
             isServiceRunning = true,
             startService = { },
             stopService = { }
@@ -74,20 +70,10 @@ fun ScreenTranslateScreenContentPreview() {
 @Composable
 private fun ScreenTranslateScreenContent(
     openDrawer: () -> Unit,
-    refreshServiceStatus: () -> Unit,
     isServiceRunning: Boolean,
     startService: (MediaProjectionToken) -> Unit,
     stopService: () -> Unit
 ) {
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        /*
-        refresh service status on every resume to reflect correct ui state
-        e.g. when service is stopped from service overlay view the screen should be
-        turned off without this function the ui state will be set to turned on
-         */
-        refreshServiceStatus()
-    }
-
     val context = LocalContext.current
     var requestDrawOverlayPermission by remember {
         mutableStateOf(false)
