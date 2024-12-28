@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.utils
+package com.zikrcode.thatword.utils
 
 import androidx.compose.ui.unit.dp
 
@@ -14,4 +14,6 @@ object Dimens {
     val SpacingSextuple = 48.dp
     val SpacingSeptuple = 64.dp
     val SpacingOctuple = 80.dp
+
+    val ElevationSingleHalf = 12.dp
 }

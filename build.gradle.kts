@@ -3,9 +3,15 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
 
-    // ComposeCompilerPlugin
+    // Compose Compiler Plugin
     alias(libs.plugins.compose.compiler.plugin) apply false
 
-    // KotlinSerializationPlugin
+    // Kotlin Serialization Plugin
     alias(libs.plugins.kotlin.serialization.plugin) apply false
+
+    // KSP (Kotlin Symbol Processing)
+    alias(libs.plugins.ksp.plugin) apply false
+
+    // Hilt Plugin
+    alias(libs.plugins.hilt.plugin) apply false
 }

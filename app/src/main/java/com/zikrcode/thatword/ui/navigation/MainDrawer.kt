@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.utils.Dimens
+import com.zikrcode.thatword.utils.Dimens
 
 @Composable
 fun MainDrawer(

@@ -2,11 +2,17 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 
-    // ComposeCompilerPlugin
+    // Compose Compiler Plugin
     alias(libs.plugins.compose.compiler.plugin)
 
-    // KotlinSerializationPlugin
+    // Kotlin Serialization Plugin
     alias(libs.plugins.kotlin.serialization.plugin)
+
+    // KSP (Kotlin Symbol Processing)
+    alias(libs.plugins.ksp.plugin)
+
+    // Hilt Plugin
+    alias(libs.plugins.hilt.plugin)
 }
 
 android {
@@ -56,6 +62,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -75,4 +82,12 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Lifecycle Service
+    implementation(libs.androidx.lifecycle.service)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
 }
