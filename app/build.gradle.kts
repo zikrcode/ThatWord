@@ -90,4 +90,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    // ML Kit Latin text recognition
+    implementation(libs.ml.kit.text.recognition)
+
+    // ML Kit Translation
+    implementation(libs.ml.kit.translate)
 }

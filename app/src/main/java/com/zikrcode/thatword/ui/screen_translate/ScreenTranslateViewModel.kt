@@ -61,7 +61,7 @@ class ScreenTranslateViewModel @Inject constructor(
         }
     }
 
-    private lateinit var serviceConnection: ServiceConnection
+    private var serviceConnection: ServiceConnection? = null
 
     private fun bindService() {
         serviceConnection = ScreenTranslateService.bindWithService { service ->
@@ -80,12 +80,17 @@ class ScreenTranslateViewModel @Inject constructor(
         }
         context.bindService(
             ScreenTranslateService.createIntent(context),
-            serviceConnection,
+            serviceConnection!!,
             Context.BIND_AUTO_CREATE
         )
     }
 
-    private fun unbindService() = context.unbindService(serviceConnection)
+    private fun unbindService() {
+        serviceConnection?.let { connection ->
+            context.unbindService(connection)
+            serviceConnection = null
+        }
+    }
 
     override fun onCleared() = unbindService()
 }

@@ -1,24 +1,24 @@
 package com.zikrcode.thatword.ui.screen_translate.service
 
-import android.app.Notification
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ServiceInfo
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
-import com.zikrcode.thatword.R
+import androidx.lifecycle.coroutineScope
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
+import com.zikrcode.thatword.ui.utils.Notifications
 import com.zikrcode.thatword.utils.service.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.ui.utils.composables.AppOverlayView
-import com.zikrcode.thatword.utils.AppConstants
+import com.zikrcode.thatword.utils.extensions.parcelable
 import com.zikrcode.thatword.utils.extensions.px
 
 class ScreenTranslateService : OverlayService() {
@@ -54,62 +54,40 @@ class ScreenTranslateService : OverlayService() {
         }
     }
 
+    private var stopServiceCallback: (() -> Unit)? = null
+    private var screenReader: ScreenReader? = null
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        val notification = createNotification()
-        val serviceType =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
-        } else {
-            0
-        }
+
+        Notifications.createNotificationChannel(applicationContext)
+        val notification = Notifications.createNotification(applicationContext)
 
         startForeground(
             SCREEN_TRANSLATE_NOTIFICATION_ID,
             notification,
-            serviceType
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
         )
+        startScreenReader(intent)
 
         return START_STICKY
     }
-
-    private fun createNotification(): Notification =
-        Notification.Builder(this, AppConstants.SCREEN_TRANSLATE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_screen_translate)
-            .setContentTitle(getString(R.string.screen_translate))
-            /*
-            to make notification non-dismissable by the user only in Android 13 (API level 33)
-            it is non-dismissable by default in Android 12 (API level 31) and lower versions
-            from Android 14 (API level 34) onwards it is dismissable and can not be avoided
-             */
-            .setOngoing(true)
-            .setShowWhen(false)
-            .apply {
-                // to show notification immediately after service starts
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
-                }
-            }
-            .build()
 
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
         return ScreenTranslateBinder()
     }
 
-    private var stopServiceCallback: (() -> Unit)? = null
-
-    fun setStopServiceCallback(callback: () -> Unit) {
-        stopServiceCallback = callback
-    }
-
     @Composable
     override fun OverlayView(modifier: Modifier) {
         AppOverlayView(
-            onCloseClick = {
-                stopServiceCallback?.invoke()
-                stopSelf()
+            onCloseClick = ::stopService,
+            onTranslateClick = {
+                screenReader?.translate { translatedText ->
+                    // TODO
+                    println("Translated text: $translatedText")
+                }
             },
-            onTranslateClick = { TODO() },
             modifier = modifier
         )
     }
@@ -119,6 +97,31 @@ class ScreenTranslateService : OverlayService() {
             x = Dimens.SpacingDouble.value.px,
             y = (resources.displayMetrics.heightPixels - 200.dp.value.px) / 2
         )
+    }
+
+    private fun startScreenReader(intent: Intent?) {
+        val currentIntent = intent ?: return
+        val resultCode = currentIntent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED)
+        val projectionData = currentIntent.parcelable<Intent>(EXTRA_PROJECTION_DATA)
+
+        if (resultCode == Activity.RESULT_OK && projectionData != null) {
+            screenReader = ScreenReader(
+                this,
+                lifecycle.coroutineScope,
+                resultCode,
+                projectionData,
+                ::stopService
+            )
+        }
+    }
+
+    private fun stopService() {
+        stopServiceCallback?.invoke()
+        stopSelf()
+    }
+
+    fun setStopServiceCallback(callback: () -> Unit) {
+        stopServiceCallback = callback
     }
 
     inner class ScreenTranslateBinder : Binder() {
