@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.zikrcode.thatword"
-        minSdk = 29
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -90,4 +90,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    // ML Kit Latin text recognition
+    implementation(libs.ml.kit.text.recognition)
+
+    // ML Kit Translation
+    implementation(libs.ml.kit.translate)
 }
