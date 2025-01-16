@@ -11,16 +11,20 @@ import android.os.IBinder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.coroutineScope
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Notifications
-import com.zikrcode.thatword.utils.service.OverlayService
-import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.ui.utils.composables.AppOverlayView
+import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.parcelable
 import com.zikrcode.thatword.utils.extensions.px
+import com.zikrcode.thatword.utils.service.OverlayService
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ScreenTranslateService : OverlayService() {
 
     companion object {
@@ -54,8 +58,9 @@ class ScreenTranslateService : OverlayService() {
         }
     }
 
+    @Inject lateinit var screenReaderFactory: ScreenReader.Factory
+    private lateinit var screenReader: ScreenReader
     private var stopServiceCallback: (() -> Unit)? = null
-    private var screenReader: ScreenReader? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -83,9 +88,9 @@ class ScreenTranslateService : OverlayService() {
         AppOverlayView(
             onCloseClick = ::stopService,
             onTranslateClick = {
-                screenReader?.translate { translatedText ->
-                    // TODO
-                    println("Translated text: $translatedText")
+                screenReader.translate { imageBitmap ->
+                    imageBitmap?.let { showTranslatedImageView(it.asImageBitmap()) }
+                    println("Translated ImageBitmap: ${imageBitmap?.asImageBitmap()}")
                 }
             },
             modifier = modifier
@@ -105,12 +110,11 @@ class ScreenTranslateService : OverlayService() {
         val projectionData = currentIntent.parcelable<Intent>(EXTRA_PROJECTION_DATA)
 
         if (resultCode == Activity.RESULT_OK && projectionData != null) {
-            screenReader = ScreenReader(
-                this,
-                lifecycle.coroutineScope,
-                resultCode,
-                projectionData,
-                ::stopService
+            screenReader = screenReaderFactory.create(
+                coroutineScope = lifecycle.coroutineScope,
+                resultCode = resultCode,
+                projectionData = projectionData,
+                onScreenReaderStop = ::stopService
             )
         }
     }
