@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.utils.composables
+package com.zikrcode.thatword.ui.common.composables
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -8,8 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.common.theme.AppTheme
 
 @Composable
 fun AppAlertDialog(
@@ -25,12 +26,18 @@ fun AppAlertDialog(
         onDismissRequest = { onDismissClick.invoke() },
         confirmButton = {
             TextButton(onClick = onConfirmClick) {
-                Text(text = confirmButtonText)
+                Text(
+                    text = confirmButtonText,
+                    color = AppTheme.colorScheme.main
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismissClick) {
-                Text(text = dismissButtonText)
+                Text(
+                    text = dismissButtonText,
+                    color = AppTheme.colorScheme.main
+                )
             }
         },
         icon = {
@@ -40,14 +47,18 @@ fun AppAlertDialog(
             )
         },
         title = { Text(text = title) },
-        text = { Text(text = text) }
+        text = { Text(text = text) },
+        containerColor = AppTheme.colorScheme.container,
+        iconContentColor = AppTheme.colorScheme.icon,
+        titleContentColor = AppTheme.colorScheme.text,
+        textContentColor = AppTheme.colorScheme.text
     )
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-fun AppAlertDialogPreview() {
-    ThatWordTheme {
+private fun AppAlertDialogPreview() {
+    AppTheme {
         AppAlertDialog(
             icon = painterResource(R.drawable.ic_info),
             title = "Warning",

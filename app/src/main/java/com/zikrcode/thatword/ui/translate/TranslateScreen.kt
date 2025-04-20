@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.common.theme.AppTheme
 
 @Composable
 fun TranslateScreen(openDrawer: () -> Unit) {
@@ -27,7 +27,7 @@ fun TranslateScreen(openDrawer: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun TranslateScreenContentPreview() {
-    ThatWordTheme {
+    AppTheme {
         TranslateScreenContent { }
     }
 }

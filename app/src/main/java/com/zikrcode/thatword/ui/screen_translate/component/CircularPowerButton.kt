@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
 @Composable
@@ -71,7 +71,7 @@ fun CircularPowerButton(
 @Preview
 @Composable
 fun ScreenTranslateScreenContentPreview() {
-    ThatWordTheme {
+    AppTheme {
         CircularPowerButton(
             text = "Off",
             onClick = { },

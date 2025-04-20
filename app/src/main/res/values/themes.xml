@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Theme.ThatWord.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/main</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.ThatWord</item>
+    </style>
+
     <style name="Theme.ThatWord" parent="android:Theme.Material.Light.NoActionBar" />
+
 </resources>
