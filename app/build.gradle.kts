@@ -77,6 +77,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
 

@@ -10,13 +10,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,17 +22,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
-import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Permissions
-import com.zikrcode.thatword.ui.utils.composables.AppAlertDialog
+import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
+import com.zikrcode.thatword.ui.common.composables.AppTopBar
 
 @Composable
 fun ScreenTranslateScreen(
@@ -54,10 +50,10 @@ fun ScreenTranslateScreen(
     )
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
-fun ScreenTranslateScreenContentPreview() {
-    ThatWordTheme {
+private fun ScreenTranslateScreenContentPreview() {
+    AppTheme {
         ScreenTranslateScreenContent(
             openDrawer = { },
             isServiceRunning = true,
@@ -84,8 +80,12 @@ private fun ScreenTranslateScreenContent(
 
     Scaffold(
         topBar = {
-            ScreenTranslateTopBar(openDrawer)
-        }
+            AppTopBar(
+                title = stringResource(R.string.screen_translate),
+                openDrawer = openDrawer
+            )
+        },
+        containerColor = AppTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -139,24 +139,6 @@ private fun ScreenTranslateScreenContent(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ScreenTranslateTopBar(openDrawer: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(text = stringResource(R.string.screen_translate))
-        },
-        navigationIcon = {
-            IconButton(onClick = openDrawer) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_menu),
-                    contentDescription = stringResource(R.string.open_drawer)
-                )
-            }
-        }
-    )
 }
 
 @Composable

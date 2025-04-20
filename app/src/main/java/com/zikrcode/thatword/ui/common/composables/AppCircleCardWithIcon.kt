@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.utils.composables
+package com.zikrcode.thatword.ui.common.composables
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,9 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.theme.ThatWordTheme
+import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
 @Composable
@@ -50,17 +50,17 @@ fun AppCircleCardWithIcon(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-fun AppCircleCardWithIconPreview() {
-    ThatWordTheme {
+private fun AppCircleCardWithIconPreview() {
+    AppTheme {
         AppCircleCardWithIcon(
             onClick = { },
             iconPainter = painterResource(R.drawable.ic_close),
             iconContentDescription = null,
-            borderColor = MaterialTheme.colorScheme.error,
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            iconColor = MaterialTheme.colorScheme.error
+            borderColor = AppTheme.colorScheme.red,
+            containerColor = AppTheme.colorScheme.container,
+            iconColor = AppTheme.colorScheme.red
         )
     }
 }

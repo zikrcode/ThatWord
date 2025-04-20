@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.coroutineScope
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Notifications
-import com.zikrcode.thatword.ui.utils.composables.AppOverlayView
+import com.zikrcode.thatword.ui.common.composables.AppOverlayView
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.parcelable
 import com.zikrcode.thatword.utils.extensions.px
