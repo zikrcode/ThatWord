@@ -14,9 +14,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.coroutineScope
+import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Notifications
 import com.zikrcode.thatword.ui.common.composables.AppOverlayView
+import com.zikrcode.thatword.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.parcelable
 import com.zikrcode.thatword.utils.extensions.px
@@ -65,8 +67,17 @@ class ScreenTranslateService : OverlayService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        Notifications.createNotificationChannel(applicationContext)
-        val notification = Notifications.createNotification(applicationContext)
+        Notifications.createNotificationChannel(
+            id = AppConstants.SCREEN_TRANSLATE_CHANNEL_ID,
+            context = applicationContext,
+            name = getString(R.string.screen_translate_channel_name)
+        )
+        val notification = Notifications.createNotification(
+            id = AppConstants.SCREEN_TRANSLATE_CHANNEL_ID,
+            context = applicationContext,
+            iconRes = R.drawable.ic_screen_translate,
+            title = getString(R.string.screen_translate)
+        )
 
         startForeground(
             SCREEN_TRANSLATE_NOTIFICATION_ID,

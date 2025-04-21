@@ -2,16 +2,20 @@
 
     <string name="app_name">ThatWord</string>
 
+    <!-- AppCircleCardWithIcon -->
+    <string name="close">Close</string>
+    <string name="move">Move</string>
+
+    <!-- AppTopBar -->
+    <string name="open_drawer">Open Drawer</string>
+
     <!-- MainDrawer -->
-    <string name="app_icon">App icon</string>
     <string name="screen_translate">Screen Translate</string>
     <string name="screen_translate_icon">Screen Translate icon</string>
     <string name="translate">Translate</string>
     <string name="translate_icon">Translate icon</string>
 
     <!-- ScreenTranslateScreen -->
-    <string name="open_drawer">Open Drawer</string>
-    <string name="power_toggle">Power toggle</string>
     <string name="draw_overlay_permission_request_title">
         Allow Permission to Display Over Other Apps
     </string>
@@ -22,18 +26,12 @@
     </string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="off">Off</string>
-    <string name="on">On</string>
 
-    <!-- *************************************************************************************** -->
+        <!-- CircularPowerButton -->
+        <string name="start">Start</string>
+        <string name="stop">Stop</string>
 
-    <!-- ScreenTranslateService -->
-    <string name="screen_translate_channel_name">Screen Translate</string>
-
-    <!-- *************************************************************************************** -->
-
-    <!-- overlay_view.xml -->
-    <string name="close">Close</string>
-    <string name="move">Move</string>
+        <!-- ScreenTranslateService -->
+        <string name="screen_translate_channel_name">Screen Translate</string>
 
 </resources>
