@@ -5,26 +5,30 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.annotation.DrawableRes
 import androidx.core.content.getSystemService
-import com.zikrcode.thatword.R
-import com.zikrcode.thatword.utils.AppConstants
 
 object Notifications {
 
-    fun createNotificationChannel(context: Context) {
-        val notificationChannel = NotificationChannel(
-            AppConstants.SCREEN_TRANSLATE_CHANNEL_ID,
-            context.getString(R.string.screen_translate_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
+    fun createNotificationChannel(
+        id: String,
+        context: Context,
+        name: String
+    ) {
+        val notificationChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager = context.getSystemService<NotificationManager>()
         notificationManager?.createNotificationChannel(notificationChannel)
     }
 
-    fun createNotification(context: Context): Notification =
-        Notification.Builder(context, AppConstants.SCREEN_TRANSLATE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_screen_translate)
-            .setContentTitle(context.getString(R.string.screen_translate))
+    fun createNotification(
+        id: String,
+        context: Context,
+        @DrawableRes iconRes: Int,
+        title: String
+    ): Notification =
+        Notification.Builder(context, id)
+            .setSmallIcon(iconRes)
+            .setContentTitle(title)
             .setShowWhen(false)
             .apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

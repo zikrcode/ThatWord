@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,20 +19,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.screen_translate.component.CircularPowerButton
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Permissions
 import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
+import com.zikrcode.thatword.ui.screen_translate.component.CentralBoxCard
 
 @Composable
 fun ScreenTranslateScreen(
@@ -94,10 +91,8 @@ private fun ScreenTranslateScreenContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularPowerButton(
-                text = stringResource(
-                    if (isServiceRunning) R.string.on else R.string.off
-                ),
+            CentralBoxCard(
+                expanded = isServiceRunning,
                 onClick = {
                     when {
                         isServiceRunning -> {
@@ -110,11 +105,6 @@ private fun ScreenTranslateScreenContent(
                             requestDrawOverlayPermission = true
                         }
                     }
-                },
-                mainColor = if (isServiceRunning) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    Color.Red
                 }
             )
         }
@@ -184,7 +174,7 @@ private fun DrawOverlayPermission(onActionSelect: () -> Unit) {
 }
 
 @Composable
-private fun MediaProjectionTokenPermission(onResult: (MediaProjectionToken?) -> Unit, ) {
+private fun MediaProjectionTokenPermission(onResult: (MediaProjectionToken?) -> Unit) {
     val context = LocalContext.current
     val mediaProjectionManager = context.getSystemService(MediaProjectionManager::class.java)
     val mediaProjectionLauncher = rememberLauncherForActivityResult(

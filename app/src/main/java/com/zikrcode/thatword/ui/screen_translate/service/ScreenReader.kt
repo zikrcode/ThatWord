@@ -16,6 +16,8 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.getSystemService
 import com.zikrcode.thatword.data.repository.LanguageProcessingRepository
 import com.zikrcode.thatword.data.repository.VisionProcessingRepository
@@ -28,13 +30,12 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import androidx.core.graphics.createBitmap
 
 class ScreenReader @AssistedInject constructor(
     @ApplicationContext private val context: Context,
     private val languageProcessingRepository: LanguageProcessingRepository,
     private val visionProcessingRepository: VisionProcessingRepository,
-    @Assisted private val coroutineScope: CoroutineScope,
     @Assisted private val resultCode: Int,
     @Assisted private val projectionData: Intent,
     @Assisted private val onScreenReaderStop: () -> Unit
@@ -43,7 +44,6 @@ class ScreenReader @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            coroutineScope: CoroutineScope,
             resultCode: Int,
             projectionData: Intent,
             onScreenReaderStop: () -> Unit
@@ -97,7 +97,7 @@ class ScreenReader @AssistedInject constructor(
             val image = reader.acquireLatestImage()
             if (image != null) {
                 val buffer = image.planes[0].buffer
-                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                val bitmap = createBitmap(width, height)
                 bitmap.copyPixelsFromBuffer(buffer)
                 image.close()
 
@@ -142,30 +142,28 @@ class ScreenReader @AssistedInject constructor(
         return metrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
     }
 
-    fun translate(onTranslationComplete: (Bitmap?) -> Unit) {
+    suspend fun translate(): ImageBitmap? {
         imageBitmap?.let { originalBitmap ->
-            coroutineScope.launch {
-                val mutableBitmap = createMutableBitmap(originalBitmap)
-                val canvas = Canvas(mutableBitmap)
-                val paint = createTextPaint()
-                val backgroundPaint = createBackgroundPaint()
+            val mutableBitmap = createMutableBitmap(originalBitmap)
+            val canvas = Canvas(mutableBitmap)
+            val paint = createTextPaint()
+            val backgroundPaint = createBackgroundPaint()
 
-                val extractedTextWithBounds = extractTextWithBounds(originalBitmap)
+            val extractedTextWithBounds = extractTextWithBounds(originalBitmap)
 
-                if (extractedTextWithBounds != null) {
-                    applyTranslationsToCanvas(
-                        canvas,
-                        extractedTextWithBounds,
-                        paint,
-                        backgroundPaint
-                    )
-                    onTranslationComplete(mutableBitmap)
-                } else {
-                    println("OCR failed")
-                    onTranslationComplete(null)
-                }
+            return if (extractedTextWithBounds != null) {
+                applyTranslationsToCanvas(
+                    canvas,
+                    extractedTextWithBounds,
+                    paint,
+                    backgroundPaint
+                )
+                mutableBitmap.asImageBitmap()
+            } else {
+                println("OCR failed")
+                null
             }
-        }
+        } ?: return null
     }
 
     private fun createMutableBitmap(bitmap: Bitmap): Bitmap {
