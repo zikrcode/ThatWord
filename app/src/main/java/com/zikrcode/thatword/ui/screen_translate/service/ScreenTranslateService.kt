@@ -8,21 +8,13 @@ import android.content.ServiceConnection
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.IBinder
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.coroutineScope
+import androidx.compose.ui.graphics.ImageBitmap
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Notifications
-import com.zikrcode.thatword.ui.common.composables.AppOverlayView
 import com.zikrcode.thatword.utils.AppConstants
-import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.parcelable
-import com.zikrcode.thatword.utils.extensions.px
-import com.zikrcode.thatword.utils.service.OverlayService
+import com.zikrcode.thatword.ui.utils.OverlayService
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -61,8 +53,14 @@ class ScreenTranslateService : OverlayService() {
     }
 
     @Inject lateinit var screenReaderFactory: ScreenReader.Factory
+    private lateinit var overlayManager: ScreenTranslateOverlayManager
     private lateinit var screenReader: ScreenReader
     private var stopServiceCallback: (() -> Unit)? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        overlayManager = ScreenTranslateOverlayManager(this)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -86,6 +84,11 @@ class ScreenTranslateService : OverlayService() {
         )
         startScreenReader(intent)
 
+        overlayManager.displayOverlayViews(
+            onCloseClick = ::stopService,
+            onTranslateClick = ::translateScreen
+        )
+
         return START_STICKY
     }
 
@@ -94,25 +97,9 @@ class ScreenTranslateService : OverlayService() {
         return ScreenTranslateBinder()
     }
 
-    @Composable
-    override fun OverlayView(modifier: Modifier) {
-        AppOverlayView(
-            onCloseClick = ::stopService,
-            onTranslateClick = {
-                screenReader.translate { imageBitmap ->
-                    imageBitmap?.let { showTranslatedImageView(it.asImageBitmap()) }
-                    println("Translated ImageBitmap: ${imageBitmap?.asImageBitmap()}")
-                }
-            },
-            modifier = modifier
-        )
-    }
-
-    override fun overlayViewInitialPosition(): Offset {
-        return Offset(
-            x = Dimens.SpacingDouble.value.px,
-            y = (resources.displayMetrics.heightPixels - 200.dp.value.px) / 2
-        )
+    override fun onDestroy() {
+        super.onDestroy()
+        overlayManager.removeOverlayViews()
     }
 
     private fun startScreenReader(intent: Intent?) {
@@ -122,7 +109,6 @@ class ScreenTranslateService : OverlayService() {
 
         if (resultCode == Activity.RESULT_OK && projectionData != null) {
             screenReader = screenReaderFactory.create(
-                coroutineScope = lifecycle.coroutineScope,
                 resultCode = resultCode,
                 projectionData = projectionData,
                 onScreenReaderStop = ::stopService
@@ -133,6 +119,12 @@ class ScreenTranslateService : OverlayService() {
     private fun stopService() {
         stopServiceCallback?.invoke()
         stopSelf()
+    }
+
+    private suspend fun translateScreen(): ImageBitmap? {
+        val imageBitmap = screenReader.translate()
+        println("Translated ImageBitmap: $imageBitmap")
+        return imageBitmap
     }
 
     fun setStopServiceCallback(callback: () -> Unit) {
