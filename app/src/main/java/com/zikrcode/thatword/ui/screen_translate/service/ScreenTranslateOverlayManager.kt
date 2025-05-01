@@ -3,80 +3,59 @@ package com.zikrcode.thatword.ui.screen_translate.service
 import android.app.Service.WINDOW_SERVICE
 import android.graphics.PixelFormat
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.zikrcode.thatword.ui.utils.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.px
-import com.zikrcode.thatword.ui.utils.OverlayService
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class ScreenTranslateOverlayManager(private val overlayService: OverlayService) {
-
+class ScreenTranslateOverlayManager(
+    private val overlayService: OverlayService,
+    private val onCloseClick: () -> Unit,
+    private val onTranslateClick: suspend () -> ImageBitmap?
+) {
     private val windowManager: WindowManager by lazy {
         overlayService.getSystemService(WINDOW_SERVICE) as WindowManager
     }
+    private var offset = controlViewInitialPosition()
     private lateinit var overlayControlView: ComposeView
     private lateinit var overlayImageView: ComposeView
 
-    fun displayOverlayViews(
-        onCloseClick: () -> Unit,
-        onTranslateClick: suspend () -> ImageBitmap?
-    ) {
-        displayOverlayControlView(onCloseClick, onTranslateClick)
+    fun initOverlayViews() {
+        displayOverlayControlView()
     }
 
-    private fun displayOverlayControlView(
-        onCloseClick: () -> Unit,
-        onTranslateClick: suspend () -> ImageBitmap?
-    ) {
-        val initialOffset = overlayViewInitialPosition()
-        val params = WindowManager.LayoutParams().apply {
-            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-
-            width = WindowManager.LayoutParams.WRAP_CONTENT
-            height = WindowManager.LayoutParams.WRAP_CONTENT
-
-            x = initialOffset.x.roundToInt()
-            y = initialOffset.y.roundToInt()
-
-            gravity = Gravity.TOP or Gravity.START
-            format = PixelFormat.TRANSLUCENT
-
-            type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        }
+    private fun displayOverlayControlView() {
+        val params = controlViewWindowParam(offset)
 
         overlayControlView = ComposeView(overlayService).apply {
-            setViewTreeLifecycleOwner(overlayService)
-            setViewTreeViewModelStoreOwner(overlayService)
-            setViewTreeSavedStateRegistryOwner(overlayService)
+            setupViewTreeOwners()
 
             setContent {
-                var offset = remember { initialOffset }
+                var currentOffset = remember { offset }
 
                 OverlayControlView(
                     onCloseClick = onCloseClick,
                     onTranslateClick = {
                         overlayService.lifecycleScope.launch {
+                            saveControlViewOffset(currentOffset)
+                            removeOverlayControlView()
+                            delay(500) // to make sure control view is not captured
                             val imageBitmap = onTranslateClick.invoke()
                             displayOverlayImageView(imageBitmap)
                         }
@@ -86,11 +65,11 @@ class ScreenTranslateOverlayManager(private val overlayService: OverlayService) 
                             detectDragGestures { change, dragAmount ->
                                 change.consume()
 
-                                offset += dragAmount
+                                currentOffset += dragAmount
 
                                 params.apply {
-                                    x = offset.x.roundToInt()
-                                    y = offset.y.roundToInt()
+                                    x = currentOffset.x.roundToInt()
+                                    y = currentOffset.y.roundToInt()
                                 }
 
                                 windowManager.updateViewLayout(this@apply, params)
@@ -103,54 +82,69 @@ class ScreenTranslateOverlayManager(private val overlayService: OverlayService) 
         windowManager.addView(overlayControlView, params)
     }
 
-    private fun overlayViewInitialPosition(): Offset {
+    private fun controlViewInitialPosition(): Offset {
+        val controlViewWidth = OverlayControlViewWidth.value.px
+        val controlViewHeight = OverlayControlViewHeight.value.px
+        val padding = Dimens.SpacingQuadruple.value.px
         return Offset(
-            x = Dimens.SpacingDouble.value.px,
-            y = (overlayService.resources.displayMetrics.heightPixels - 200.dp.value.px) / 2
+            x = overlayService.resources.displayMetrics.widthPixels - controlViewWidth - padding,
+            y = (overlayService.resources.displayMetrics.heightPixels - controlViewHeight) / 2
         )
+    }
+
+    private fun controlViewWindowParam(initialOffset: Offset) = WindowManager.LayoutParams()
+        .apply {
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            width = WindowManager.LayoutParams.WRAP_CONTENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
+            x = initialOffset.x.roundToInt()
+            y = initialOffset.y.roundToInt()
+            gravity = Gravity.TOP or Gravity.START
+            format = PixelFormat.TRANSLUCENT
+            type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        }
+
+    private fun View.setupViewTreeOwners() {
+        setViewTreeLifecycleOwner(overlayService)
+        setViewTreeViewModelStoreOwner(overlayService)
+        setViewTreeSavedStateRegistryOwner(overlayService)
+    }
+
+    private fun saveControlViewOffset(newOffset: Offset) {
+        offset = newOffset
     }
 
     private fun displayOverlayImageView(imageBitmap: ImageBitmap?) {
         if (imageBitmap != null) {
-            val params = WindowManager.LayoutParams().apply {
-                flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                width = WindowManager.LayoutParams.MATCH_PARENT
-                height = WindowManager.LayoutParams.MATCH_PARENT
-                format = PixelFormat.TRANSLUCENT
-                type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            }
+            val params = imageViewWindowParam()
 
             overlayImageView = ComposeView(overlayService).apply {
-                setViewTreeLifecycleOwner(overlayService)
-                setViewTreeViewModelStoreOwner(overlayService)
-                setViewTreeSavedStateRegistryOwner(overlayService)
+                setupViewTreeOwners()
 
                 setContent {
-                    Box {
-                        Image(
-                            bitmap = imageBitmap,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Green)
-                        )
-                        Button(
-                            onClick = {
-                                println("HERE WE GO")
-                                removeOverlayImageView()
-//                                displayOverlayControlView()
-                            },
-                            modifier = Modifier.align(Alignment.TopEnd)
-                        ) {
-                            Text("CLOSE")
-                        }
-                    }
+                    OverlayImageView(
+                        imageBitmap = imageBitmap,
+                        onCloseClick = {
+                            removeOverlayImageView()
+                            displayOverlayControlView()
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
 
             windowManager.addView(overlayImageView, params)
         }
     }
+
+    private fun imageViewWindowParam() = WindowManager.LayoutParams()
+        .apply {
+            flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.MATCH_PARENT
+            format = PixelFormat.TRANSLUCENT
+            type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        }
 
     private fun removeOverlayControlView() {
         if (this::overlayControlView.isInitialized && overlayControlView.isAttachedToWindow) {
