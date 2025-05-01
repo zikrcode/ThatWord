@@ -59,7 +59,11 @@ class ScreenTranslateService : OverlayService() {
 
     override fun onCreate() {
         super.onCreate()
-        overlayManager = ScreenTranslateOverlayManager(this)
+        overlayManager = ScreenTranslateOverlayManager(
+            overlayService = this,
+            onCloseClick = ::stopService,
+            onTranslateClick = ::translateScreen
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -83,11 +87,7 @@ class ScreenTranslateService : OverlayService() {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
         )
         startScreenReader(intent)
-
-        overlayManager.displayOverlayViews(
-            onCloseClick = ::stopService,
-            onTranslateClick = ::translateScreen
-        )
+        overlayManager.initOverlayViews()
 
         return START_STICKY
     }

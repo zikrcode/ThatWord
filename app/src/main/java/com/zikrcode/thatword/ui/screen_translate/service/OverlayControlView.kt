@@ -11,7 +11,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -35,6 +34,9 @@ import com.zikrcode.thatword.ui.common.theme.AppColor
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
+val OverlayControlViewWidth = 60.dp
+val OverlayControlViewHeight = 100.dp
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OverlayControlView(
@@ -45,7 +47,11 @@ fun OverlayControlView(
     var closeable by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.height(100.dp),
+        modifier = Modifier
+            .size(
+                width = OverlayControlViewWidth,
+                height = OverlayControlViewHeight
+            ),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -110,8 +116,8 @@ private fun SmallCircleButton(
     ) {
         Icon(
             painter = iconPainter,
-            tint = mainColor,
-            contentDescription = iconContentDescription
+            contentDescription = iconContentDescription,
+            tint = mainColor
         )
     }
 }
