@@ -96,8 +96,13 @@ class ScreenReader @AssistedInject constructor(
         imageReader!!.setOnImageAvailableListener({ reader ->
             val image = reader.acquireLatestImage()
             if (image != null) {
-                val buffer = image.planes[0].buffer
-                val bitmap = createBitmap(width, height)
+                val planes = image.planes
+                val buffer = planes[0].buffer
+                val pixelStride = planes[0].pixelStride
+                val rowStride = planes[0].rowStride
+                val rowPadding = rowStride - pixelStride * width
+
+                val bitmap = createBitmap(width + rowPadding / pixelStride, height)
                 bitmap.copyPixelsFromBuffer(buffer)
                 image.close()
 
