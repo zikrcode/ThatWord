@@ -25,10 +25,12 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.domain.models.Language
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Permissions
 import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
+import com.zikrcode.thatword.ui.common.composables.AppContentLoading
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
 import com.zikrcode.thatword.ui.screen_translate.component.CentralBoxCard
 
@@ -41,9 +43,12 @@ fun ScreenTranslateScreen(
 
     ScreenTranslateScreenContent(
         openDrawer = openDrawer,
+        isLoading = uiState.isLoading,
         isServiceRunning = uiState.isServiceRunning,
-        startService = viewModel::startService,
-        stopService = viewModel::stopService
+        languages = uiState.supportedLanguages,
+        inputLanguage = uiState.inputLanguage,
+        outputLanguage = uiState.outputLanguage,
+        onEvent = viewModel::onEvent,
     )
 }
 
@@ -53,9 +58,12 @@ private fun ScreenTranslateScreenContentPreview() {
     AppTheme {
         ScreenTranslateScreenContent(
             openDrawer = { },
+            isLoading = true,
             isServiceRunning = true,
-            startService = { },
-            stopService = { }
+            languages = emptyList(),
+            inputLanguage = Language("en"),
+            outputLanguage = Language("ru"),
+            onEvent = { }
         )
     }
 }
@@ -63,9 +71,12 @@ private fun ScreenTranslateScreenContentPreview() {
 @Composable
 private fun ScreenTranslateScreenContent(
     openDrawer: () -> Unit,
+    isLoading: Boolean,
     isServiceRunning: Boolean,
-    startService: (MediaProjectionToken) -> Unit,
-    stopService: () -> Unit
+    languages: List<Language>,
+    inputLanguage: Language?,
+    outputLanguage: Language?,
+    onEvent: (ScreenTranslateUiEvent) -> Unit,
 ) {
     val context = LocalContext.current
     var requestDrawOverlayPermission by remember {
@@ -84,50 +95,78 @@ private fun ScreenTranslateScreenContent(
         },
         containerColor = AppTheme.colorScheme.background
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CentralBoxCard(
-                expanded = isServiceRunning,
-                onClick = {
-                    when {
-                        isServiceRunning -> {
-                            stopService()
+        if (isLoading) {
+            AppContentLoading(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            )
+        } else {
+            if (languages.isEmpty() || inputLanguage == null || outputLanguage == null) {
+                // in real scenario we should have all content when isLoading is false but to prevent NPE
+                return@Scaffold
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CentralBoxCard(
+                    expanded = isServiceRunning,
+                    onClick = {
+                        when {
+                            isServiceRunning -> {
+                                onEvent.invoke(ScreenTranslateUiEvent.StopService)
+                            }
+                            Permissions.checkDrawOverlayPermission(context) -> {
+                                startServiceWithMediaProjection = true
+                            }
+                            else -> {
+                                requestDrawOverlayPermission = true
+                            }
                         }
-                        Permissions.checkDrawOverlayPermission(context) -> {
-                            startServiceWithMediaProjection = true
-                        }
-                        else -> {
-                            requestDrawOverlayPermission = true
-                        }
+                    },
+                    languages = languages,
+                    inputLanguage = inputLanguage,
+                    outputLanguage = outputLanguage,
+                    onLanguageChange = { language, direction ->
+                        onEvent.invoke(
+                            ScreenTranslateUiEvent.ChangeLanguage(
+                                language = language,
+                                direction = direction
+                            )
+                        )
+                    },
+                    onSwapLanguage = {
+                        onEvent.invoke(ScreenTranslateUiEvent.SwapLanguages)
                     }
-                }
-            )
+                )
+            }
         }
+    }
 
-        // optional permission
-        PostNotificationPermission()
+    // optional permission
+    PostNotificationPermission()
 
-        // required permission on first launch
-        if (requestDrawOverlayPermission) {
-            DrawOverlayPermission(
-                onActionSelect = { requestDrawOverlayPermission = false }
-            )
-        }
+    // required permission on first launch
+    if (requestDrawOverlayPermission) {
+        DrawOverlayPermission(
+            onActionSelect = { requestDrawOverlayPermission = false }
+        )
+    }
 
-        // special required permission on every launch
-        if (startServiceWithMediaProjection) {
-            MediaProjectionTokenPermission(
-                onResult = { token ->
-                    if (token != null) startService(token)
-                    startServiceWithMediaProjection = false
-                }
-            )
-        }
+    // special required permission on every launch
+    if (startServiceWithMediaProjection) {
+        MediaProjectionTokenPermission(
+            onResult = { token ->
+                if (token != null) onEvent.invoke(
+                    ScreenTranslateUiEvent.StartService(token)
+                )
+                startServiceWithMediaProjection = false
+            }
+        )
     }
 }
 

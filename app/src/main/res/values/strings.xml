@@ -31,6 +31,10 @@
         <string name="start">Start</string>
         <string name="stop">Stop</string>
 
+        <!-- LanguageSelector -->
+        <string name="translate_from">Translate From</string>
+        <string name="translate_to">Translate To</string>
+
         <!-- ScreenTranslateService -->
         <string name="screen_translate_channel_name">Screen Translate</string>
 

@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.zikrcode.thatword.ui.navigation.MainNavigation
 import com.zikrcode.thatword.ui.common.theme.AppTheme
@@ -22,14 +21,8 @@ class MainActivity : ComponentActivity() {
                 MainContent()
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainContentPreview() {
-    AppTheme {
-        MainContent()
+        // to have completely transparent navigation bar without any scrim color applied
+        window.isNavigationBarContrastEnforced = false
     }
 }
 

@@ -29,7 +29,7 @@ import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
-val CircularPowerButtonSize = 160.dp
+val CircularPowerButtonSize = 140.dp
 
 @Composable
 fun CircularPowerButton(
@@ -62,14 +62,14 @@ fun CircularPowerButton(
         Icon(
             painter = painterResource(iconDrawableRes),
             contentDescription = stringResource(labelStringRes),
-            modifier = Modifier.size(50.dp),
+            modifier = Modifier.size(30.dp),
             tint = contentColor
         )
         AppVerticalSpacer(Dimens.SpacingSingleHalf)
         Text(
             text = stringResource(labelStringRes),
             fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = AppTheme.colorScheme.text
         )
     }

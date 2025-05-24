@@ -29,6 +29,9 @@ class ScreenTranslateOverlayManager(
     private val onCloseClick: () -> Unit,
     private val onTranslateClick: suspend () -> ImageBitmap?
 ) {
+    companion object {
+        private const val ANIMATION_MAX_DURATION = 100L
+    }
     private val windowManager: WindowManager by lazy {
         overlayService.getSystemService(WINDOW_SERVICE) as WindowManager
     }
@@ -52,12 +55,13 @@ class ScreenTranslateOverlayManager(
                 OverlayControlView(
                     onCloseClick = onCloseClick,
                     onTranslateClick = {
-                        overlayService.lifecycleScope.launch {
-                            saveControlViewOffset(currentOffset)
-                            removeOverlayControlView()
-                            delay(500) // to make sure control view is not captured
-                            val imageBitmap = onTranslateClick.invoke()
-                            displayOverlayImageView(imageBitmap)
+                        saveControlViewOffset(currentOffset)
+                        removeOverlayControlView {
+                            overlayService.lifecycleScope.launch {
+                                delay(200) // to capture screen without control view
+                                val imageBitmap = onTranslateClick.invoke()
+                                displayOverlayImageView(imageBitmap)
+                            }
                         }
                     },
                     modifier = Modifier
@@ -84,11 +88,10 @@ class ScreenTranslateOverlayManager(
 
     private fun controlViewInitialPosition(): Offset {
         val controlViewWidth = OverlayControlViewWidth.value.px
-        val controlViewHeight = OverlayControlViewHeight.value.px
         val padding = Dimens.SpacingQuadruple.value.px
         return Offset(
             x = overlayService.resources.displayMetrics.widthPixels - controlViewWidth - padding,
-            y = (overlayService.resources.displayMetrics.heightPixels - controlViewHeight) / 2
+            y = 0f
         )
     }
 
@@ -125,8 +128,9 @@ class ScreenTranslateOverlayManager(
                     OverlayImageView(
                         imageBitmap = imageBitmap,
                         onCloseClick = {
-                            removeOverlayImageView()
-                            displayOverlayControlView()
+                            removeOverlayImageView {
+                                displayOverlayControlView()
+                            }
                         },
                         modifier = Modifier.fillMaxSize()
                     )
@@ -146,15 +150,21 @@ class ScreenTranslateOverlayManager(
             type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         }
 
-    private fun removeOverlayControlView() {
+    private fun removeOverlayControlView(onPostDelay: (() -> Unit)? = null) {
         if (this::overlayControlView.isInitialized && overlayControlView.isAttachedToWindow) {
-            windowManager.removeView(overlayControlView)
+            overlayControlView.postDelayed({
+                windowManager.removeView(overlayControlView)
+                onPostDelay?.invoke()
+            }, ANIMATION_MAX_DURATION)
         }
     }
 
-    private fun removeOverlayImageView() {
+    private fun removeOverlayImageView(onPostDelay: (() -> Unit)? = null) {
         if (this::overlayImageView.isInitialized && overlayImageView.isAttachedToWindow) {
-            windowManager.removeView(overlayImageView)
+            overlayImageView.postDelayed({
+                windowManager.removeView(overlayImageView)
+                onPostDelay?.invoke()
+            }, ANIMATION_MAX_DURATION)
         }
     }
 

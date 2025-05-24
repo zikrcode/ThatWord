@@ -3,16 +3,16 @@ package com.zikrcode.thatword.ui.utils
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.provider.Settings
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 
 object Permissions {
 
     fun requestDrawOverlayPermission(context: Context) {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${context.packageName}")
+            "package:${context.packageName}".toUri()
         )
         context.startActivity(intent)
     }
