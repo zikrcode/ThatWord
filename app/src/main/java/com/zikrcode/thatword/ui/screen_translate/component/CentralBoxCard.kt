@@ -91,41 +91,44 @@ fun CentralBoxCard(
         AnimatedVisibility(visible = expanded) {
             AppHorizontalDivider(Modifier.padding(horizontal = Dimens.SpacingQuadruple))
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(languageSelectorsHeight),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            LanguageSelector(
-                direction = LanguageDirection.Input,
-                currentLanguage = inputLanguage,
-                languages = languages,
-                onLanguageSelect = { language ->
-                    onLanguageChange.invoke(language, LanguageDirection.Input)
-                }
-            )
 
-            IconButton(
-                onClick = onSwapLanguage,
-                modifier = Modifier.size(swapButtonSize)
+        if (languageSelectorsHeight > 0.dp) { // to make sure it is not clickable when height is 0
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                .height(languageSelectorsHeight),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_swap),
-                    contentDescription = null,
-                    tint = AppTheme.colorScheme.icon
+                LanguageSelector(
+                    direction = LanguageDirection.Input,
+                    currentLanguage = inputLanguage,
+                    languages = languages,
+                    onLanguageSelect = { language ->
+                        onLanguageChange.invoke(language, LanguageDirection.Input)
+                    }
+                )
+
+                IconButton(
+                    onClick = onSwapLanguage,
+                    modifier = Modifier.size(swapButtonSize)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_swap),
+                        contentDescription = null,
+                        tint = AppTheme.colorScheme.icon
+                    )
+                }
+
+                LanguageSelector(
+                    direction = LanguageDirection.Output,
+                    currentLanguage = outputLanguage,
+                    languages = languages,
+                    onLanguageSelect = { language ->
+                        onLanguageChange.invoke(language, LanguageDirection.Output)
+                    }
                 )
             }
-
-            LanguageSelector(
-                direction = LanguageDirection.Output,
-                currentLanguage = outputLanguage,
-                languages = languages,
-                onLanguageSelect = { language ->
-                    onLanguageChange.invoke(language, LanguageDirection.Output)
-                }
-            )
         }
     }
 }
@@ -140,7 +143,9 @@ private fun <T> centralBoxCardSpringSpec(): SpringSpec<T> = spring(
 private fun CentralBoxCardPreview() {
     AppTheme {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             var expanded by remember { mutableStateOf(true) }

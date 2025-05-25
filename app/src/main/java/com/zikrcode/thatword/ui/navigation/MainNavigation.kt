@@ -41,6 +41,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
     ModalNavigationDrawer(
         drawerContent = {
             MainDrawer(
+                drawerState = drawerState,
                 currentRoute = currentRoute,
                 onNavigateToScreenTranslate = {
                     navActions.navigateToScreenTranslate()

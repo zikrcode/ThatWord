@@ -99,4 +99,7 @@ dependencies {
 
     // ML Kit Translation
     implementation(libs.ml.kit.translate)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
 }

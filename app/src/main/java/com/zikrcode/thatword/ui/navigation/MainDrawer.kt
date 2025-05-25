@@ -2,36 +2,51 @@ package com.zikrcode.thatword.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppHorizontalDivider
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
-import com.zikrcode.thatword.ui.common.theme.AppColor
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
 @Composable
 fun MainDrawer(
+    drawerState: DrawerState,
     currentRoute: Any,
     onNavigateToScreenTranslate: () -> Unit,
     onNavigateToTranslate: () -> Unit,
     closeDrawer: () -> Unit
 ) {
-    ModalDrawerSheet(drawerContainerColor = AppTheme.colorScheme.background) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val drawerWidth = screenWidth * 4 / 5
+
+    ModalDrawerSheet(
+        drawerState = drawerState,
+        modifier = Modifier
+            .width(drawerWidth)
+            .fillMaxHeight(),
+        drawerContainerColor = AppTheme.colorScheme.background
+    ) {
         ThatWordLogo()
         AppHorizontalDivider()
         AppVerticalSpacer(Dimens.SpacingSingleHalf)
@@ -60,6 +75,7 @@ fun MainDrawer(
 private fun MainDrawerPreview() {
     AppTheme {
         MainDrawer(
+            drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
             currentRoute = ScreenTranslate,
             onNavigateToScreenTranslate = { },
             onNavigateToTranslate = { },
@@ -73,7 +89,7 @@ private fun ThatWordLogo() {
     Text(
         text = stringResource(R.string.app_name),
         modifier = Modifier.padding(Dimens.SpacingDouble),
-        color = AppColor.MAIN,
+        color = AppTheme.colorScheme.main,
         fontSize = 25.sp,
         fontWeight = FontWeight.Black,
     )
