@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.data.repository.LanguageProcessingRepository
+import com.zikrcode.thatword.data.repository.UserRepository
 import com.zikrcode.thatword.domain.models.Language
 import com.zikrcode.thatword.ui.screen_translate.component.LanguageDirection
 import com.zikrcode.thatword.ui.screen_translate.service.ScreenTranslateService
@@ -15,42 +16,79 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel
 class ScreenTranslateViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val repository: LanguageProcessingRepository
+    private val languageProcessingRepository: LanguageProcessingRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
+
+    companion object {
+        const val LANGUAGES_TIMEOUT = 3000L
+    }
 
     private val _uiState = MutableStateFlow(ScreenTranslateUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            _uiState.update { state ->
-                state.copy(isLoading = true)
-            }
-
-            refreshServiceStatus()
-            loadLanguages()
-
-            _uiState.update { state ->
-                state.copy(isLoading = false)
-            }
-        }
+        refreshServiceStatus()
+        readLanguages()
     }
 
-    private fun loadLanguages() {
+    private fun readLanguages() {
+        val languages = languageProcessingRepository.allAvailableLanguages()
         _uiState.update { state ->
-            val languages = repository.allAvailableLanguages()
             state.copy(
                 supportedLanguages = languages,
-                inputLanguage = languages.first(),
-                outputLanguage = languages.last()
+                isLoading = true
             )
+        }
+
+        viewModelScope.launch {
+            val pair = withTimeoutOrNull(LANGUAGES_TIMEOUT) {
+                combine(
+                    userRepository.readInputLanguage(),
+                    userRepository.readOutputLanguage()
+                ) { input, output ->
+                    if (input != null && output != null) input to output else null
+                }
+                    .filterNotNull()
+                    .first() // Waits for the first non-null pair or times out
+            }
+
+            val (inputLanguage, outputLanguage) = pair
+                ?: (languages.first() to languages.last()) // fallback if timeout occurs
+
+            _uiState.update { state ->
+                state.copy(
+                    inputLanguage = inputLanguage,
+                    outputLanguage = outputLanguage,
+                    isLoading = false
+                )
+            }
+
+            // Continue collecting real updates from the flows
+            combine(
+                userRepository.readInputLanguage(),
+                userRepository.readOutputLanguage()
+            ) { input, output ->
+                input to output
+            }.collect { (input, output) ->
+                _uiState.update { state ->
+                    state.copy(
+                        inputLanguage = input ?: state.inputLanguage,
+                        outputLanguage = output ?: state.outputLanguage
+                    )
+                }
+            }
         }
     }
 
@@ -124,20 +162,29 @@ class ScreenTranslateViewModel @Inject constructor(
     }
 
     private fun changeLanguage(language: Language, direction: LanguageDirection) {
-        _uiState.update { state ->
-            when (direction) {
-                LanguageDirection.Input -> state.copy(inputLanguage = language)
-                LanguageDirection.Output -> state.copy(outputLanguage = language)
+        val inputLanguage = _uiState.value.inputLanguage
+        val outputLanguage = _uiState.value.outputLanguage
+
+        if (language == inputLanguage && direction == LanguageDirection.Output ||
+            language == outputLanguage && direction == LanguageDirection.Input) {
+            swapLanguages()
+        } else {
+            viewModelScope.launch {
+                when (direction) {
+                    LanguageDirection.Input -> userRepository.saveInputLanguage(language)
+                    LanguageDirection.Output -> userRepository.saveOutputLanguage(language)
+                }
             }
         }
     }
 
     private fun swapLanguages() {
-        _uiState.update { state ->
-            state.copy(
-                inputLanguage = state.outputLanguage,
-                outputLanguage = state.inputLanguage
-            )
+        val inputLanguage = _uiState.value.outputLanguage ?: return
+        val outputLanguage = _uiState.value.inputLanguage ?: return
+
+        viewModelScope.launch {
+            userRepository.saveInputLanguage(inputLanguage)
+            userRepository.saveOutputLanguage(outputLanguage)
         }
     }
 
