@@ -11,23 +11,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.zikrcode.thatword.ui.screen_translate.ScreenTranslateScreen
+import com.zikrcode.thatword.ui.screen_translate.appearance.AppearanceScreen
 import com.zikrcode.thatword.ui.translate.TranslateScreen
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainNavigation(modifier: Modifier = Modifier) {
-
     val navController = rememberNavController()
-    val startDestination = ScreenTranslate
+    val startDestination = ScreenTranslateNavGraph
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.let { navDestination ->
-        if (navDestination.hasRoute(ScreenTranslate::class)) {
-            ScreenTranslate
+        if (navDestination.hasRoute(ScreenTranslateNavGraph::class)) {
+            ScreenTranslateNavGraph
         } else {
             Translate
         }
@@ -63,20 +65,43 @@ fun MainNavigation(modifier: Modifier = Modifier) {
             enterTransition = { fadeIn() },
             exitTransition = { fadeOut() }
         ) {
-            composable<ScreenTranslate> {
-                ScreenTranslateScreen(
-                    openDrawer = {
-                        coroutineScope.launch { drawerState.open() }
-                    }
-                )
-            }
+            screenTranslateNavGraph(
+                navActions = navActions,
+                onOpenDrawer = {
+                    coroutineScope.launch { drawerState.open() }
+                }
+            )
             composable<Translate> {
                 TranslateScreen(
-                    openDrawer = {
+                    onOpenDrawer = {
                         coroutineScope.launch { drawerState.open() }
                     }
                 )
             }
+        }
+    }
+}
+
+private fun NavGraphBuilder.screenTranslateNavGraph(
+    navActions: MainNavigationActions,
+    onOpenDrawer: () -> Unit
+) {
+    navigation<ScreenTranslateNavGraph>(startDestination = ScreenTranslate) {
+        composable<ScreenTranslate> {
+            ScreenTranslateScreen(
+                onOpenDrawer = onOpenDrawer,
+                onOpenAppearance = {
+                    navActions.navigateToAppearance()
+                }
+            )
+        }
+
+        composable<Appearance> {
+            AppearanceScreen(
+                onBack = {
+                    navActions.navigateToScreenTranslate()
+                }
+            )
         }
     }
 }

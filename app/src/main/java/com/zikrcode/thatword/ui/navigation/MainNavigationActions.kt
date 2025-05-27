@@ -3,11 +3,15 @@ package com.zikrcode.thatword.ui.navigation
 import androidx.navigation.NavHostController
 import kotlinx.serialization.Serializable
 
-@Serializable
-object ScreenTranslate
+// Route for ScreenTranslate nested graph
+@Serializable object ScreenTranslateNavGraph
 
-@Serializable
-object Translate
+// Routes inside ScreenTranslate nested graph
+@Serializable object ScreenTranslate
+@Serializable object Appearance
+
+// Routes
+@Serializable object Translate
 
 class MainNavigationActions(private val navController: NavHostController) {
 
@@ -19,6 +23,13 @@ class MainNavigationActions(private val navController: NavHostController) {
             }
             // avoid multiple copies of the same destination when reselecting the same item
             launchSingleTop = true
+        }
+    }
+
+    fun navigateToAppearance() {
+        navController.navigate(Appearance) {
+            launchSingleTop = true
+            restoreState = true
         }
     }
 

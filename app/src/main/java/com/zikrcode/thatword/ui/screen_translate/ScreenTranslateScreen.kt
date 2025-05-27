@@ -32,17 +32,20 @@ import com.zikrcode.thatword.ui.utils.Permissions
 import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
 import com.zikrcode.thatword.ui.common.composables.AppContentLoading
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
+import com.zikrcode.thatword.ui.screen_translate.component.AppearanceBoxCard
 import com.zikrcode.thatword.ui.screen_translate.component.CentralBoxCard
 
 @Composable
 fun ScreenTranslateScreen(
-    openDrawer: () -> Unit,
+    onOpenDrawer: () -> Unit,
+    onOpenAppearance: () -> Unit,
     viewModel: ScreenTranslateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ScreenTranslateScreenContent(
-        openDrawer = openDrawer,
+        onOpenDrawer = onOpenDrawer,
+        onOpenAppearance = onOpenAppearance,
         isLoading = uiState.isLoading,
         isServiceRunning = uiState.isServiceRunning,
         languages = uiState.supportedLanguages,
@@ -57,10 +60,11 @@ fun ScreenTranslateScreen(
 private fun ScreenTranslateScreenContentPreview() {
     AppTheme {
         ScreenTranslateScreenContent(
-            openDrawer = { },
-            isLoading = true,
+            onOpenDrawer = { },
+            onOpenAppearance = { },
+            isLoading = false,
             isServiceRunning = true,
-            languages = emptyList(),
+            languages = listOf(Language("en"), Language("ru")),
             inputLanguage = Language("en"),
             outputLanguage = Language("ru"),
             onEvent = { }
@@ -70,7 +74,8 @@ private fun ScreenTranslateScreenContentPreview() {
 
 @Composable
 private fun ScreenTranslateScreenContent(
-    openDrawer: () -> Unit,
+    onOpenDrawer: () -> Unit,
+    onOpenAppearance: () -> Unit,
     isLoading: Boolean,
     isServiceRunning: Boolean,
     languages: List<Language>,
@@ -90,7 +95,7 @@ private fun ScreenTranslateScreenContent(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.screen_translate),
-                openDrawer = openDrawer
+                openDrawer = onOpenDrawer
             )
         },
         containerColor = AppTheme.colorScheme.background
@@ -143,6 +148,7 @@ private fun ScreenTranslateScreenContent(
                         onEvent.invoke(ScreenTranslateUiEvent.SwapLanguages)
                     }
                 )
+                AppearanceBoxCard(onClick = onOpenAppearance)
             }
         }
     }

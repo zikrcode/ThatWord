@@ -38,4 +38,7 @@
         <!-- ScreenTranslateService -->
         <string name="screen_translate_channel_name">Screen Translate</string>
 
+        <!-- AppearanceBoxCard -->
+        <string name="appearance">Appearance</string>
+
 </resources>

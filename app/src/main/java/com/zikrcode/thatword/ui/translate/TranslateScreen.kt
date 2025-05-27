@@ -20,8 +20,8 @@ import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 
 @Composable
-fun TranslateScreen(openDrawer: () -> Unit) {
-    TranslateScreenContent(openDrawer)
+fun TranslateScreen(onOpenDrawer: () -> Unit) {
+    TranslateScreenContent(onOpenDrawer)
 }
 
 @Preview(showBackground = true)
@@ -33,10 +33,10 @@ fun TranslateScreenContentPreview() {
 }
 
 @Composable
-private fun TranslateScreenContent(openDrawer: () -> Unit) {
+private fun TranslateScreenContent(onOpenDrawer: () -> Unit) {
     Scaffold(
         topBar = {
-            TranslateTopBar(openDrawer)
+            TranslateTopBar(onOpenDrawer)
         }
     ) { paddingValues ->
         Column(
