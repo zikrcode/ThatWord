@@ -6,6 +6,7 @@ import android.media.projection.MediaProjectionManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -95,7 +97,9 @@ private fun ScreenTranslateScreenContent(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.screen_translate),
-                openDrawer = onOpenDrawer
+                navIcon = painterResource(R.drawable.ic_menu),
+                navIconDescription = stringResource(R.string.open_drawer),
+                onNavIconClick = onOpenDrawer
             )
         },
         containerColor = AppTheme.colorScheme.background
@@ -148,7 +152,9 @@ private fun ScreenTranslateScreenContent(
                         onEvent.invoke(ScreenTranslateUiEvent.SwapLanguages)
                     }
                 )
-                AppearanceBoxCard(onClick = onOpenAppearance)
+                AnimatedVisibility(visible = isServiceRunning) {
+                    AppearanceBoxCard(onClick = onOpenAppearance)
+                }
             }
         }
     }

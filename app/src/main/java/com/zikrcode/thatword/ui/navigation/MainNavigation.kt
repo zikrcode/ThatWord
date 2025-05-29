@@ -1,7 +1,5 @@
 package com.zikrcode.thatword.ui.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
@@ -28,16 +26,14 @@ fun MainNavigation(modifier: Modifier = Modifier) {
     val startDestination = ScreenTranslateNavGraph
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.let { navDestination ->
-        if (navDestination.hasRoute(ScreenTranslateNavGraph::class)) {
-            ScreenTranslateNavGraph
-        } else {
-            Translate
+        when {
+            navDestination.hasRoute(ScreenTranslate::class) -> ScreenTranslate
+            navDestination.hasRoute(Appearance::class) -> Appearance
+            else -> Translate
         }
     } ?: startDestination
     val navActions = remember(navController) { MainNavigationActions(navController) }
     val coroutineScope = rememberCoroutineScope()
-
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     ModalNavigationDrawer(
@@ -56,14 +52,13 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 }
             )
         },
-        drawerState = drawerState
+        drawerState = drawerState,
+        gesturesEnabled = currentRoute != Appearance
     ) {
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = modifier,
-            enterTransition = { fadeIn() },
-            exitTransition = { fadeOut() }
+            modifier = modifier
         ) {
             screenTranslateNavGraph(
                 navActions = navActions,
@@ -96,7 +91,10 @@ private fun NavGraphBuilder.screenTranslateNavGraph(
             )
         }
 
-        composable<Appearance> {
+        composable<Appearance>(
+            enterTransition = null,
+            exitTransition = null
+        ) {
             AppearanceScreen(
                 onBack = {
                     navActions.navigateToScreenTranslate()

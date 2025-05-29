@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.zikrcode.thatword.ui.navigation.MainNavigation
@@ -28,5 +29,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun MainContent() {
-    MainNavigation()
+    // A surface container using the 'background' color from the theme
+    Surface(color = AppTheme.colorScheme.background) {
+        MainNavigation()
+    }
 }

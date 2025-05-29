@@ -54,7 +54,10 @@ fun CircularPowerButton(
                 color = contentColor,
                 shape = CircleShape
             )
-            .background(AppTheme.colorScheme.background)
+            .background(
+                color = AppTheme.colorScheme.background,
+                shape = CircleShape
+            )
             .clickable(onClick = onClick),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

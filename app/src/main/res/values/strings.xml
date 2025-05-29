@@ -41,4 +41,7 @@
         <!-- AppearanceBoxCard -->
         <string name="appearance">Appearance</string>
 
+        <!-- AppearanceScreen -->
+        <string name="navigate_back">Navigate Back</string>
+
 </resources>

@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
-import com.zikrcode.thatword.ui.common.theme.AppColor
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
@@ -74,10 +73,13 @@ fun OverlayControlView(
                 .clip(CircleShape)
                 .border(
                     width = 2.dp,
-                    color = AppColor.MAIN,
+                    color = AppTheme.colorScheme.main,
                     shape = CircleShape
                 )
-                .background(AppTheme.colorScheme.background)
+                .background(
+                    color = AppTheme.colorScheme.background,
+                    shape = CircleShape
+                )
                 .combinedClickable(
                     onClick = onTranslateClick,
                     onLongClick = { closeable = !closeable }
@@ -85,7 +87,7 @@ fun OverlayControlView(
         ) {
             Icon(
                 painter = painterResource(R.drawable.icon),
-                tint = AppColor.MAIN,
+                tint = AppTheme.colorScheme.main,
                 contentDescription = null,
                 modifier = Modifier.size(60.dp)
             )
@@ -110,7 +112,10 @@ private fun SmallCircleButton(
                 color = mainColor,
                 shape = CircleShape
             )
-            .background(AppTheme.colorScheme.background)
+            .background(
+                color = AppTheme.colorScheme.background,
+                shape = CircleShape
+            )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

@@ -82,7 +82,10 @@ fun LanguageSelector(
             .clickable {
                 showBottomSheet = true
             }
-            .background(AppTheme.colorScheme.background),
+            .background(
+                color = AppTheme.colorScheme.background,
+                shape = CircleShape
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(

@@ -8,9 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.theme.AppTheme
@@ -19,23 +20,27 @@ import com.zikrcode.thatword.ui.common.theme.AppTheme
 @Composable
 fun AppTopBar(
     title: String,
-    openDrawer: () -> Unit
+    navIcon: Painter,
+    navIconDescription: String,
+    onNavIconClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = {
             Text(text = title)
         },
+        modifier = modifier,
         navigationIcon = {
             IconButton(
-                onClick = openDrawer,
+                onClick = onNavIconClick,
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = AppTheme.colorScheme.text,
+                    contentColor = AppTheme.colorScheme.icon,
                     containerColor = AppTheme.colorScheme.background
                 )
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_menu),
-                    contentDescription = stringResource(R.string.open_drawer)
+                    painter = navIcon,
+                    contentDescription = navIconDescription
                 )
             }
         },
@@ -52,7 +57,9 @@ private fun AppTopBarPreview() {
     AppTheme {
        AppTopBar(
            title = "ThatWord",
-           openDrawer = { }
+           navIcon = painterResource(R.drawable.ic_menu),
+           navIconDescription = stringResource(R.string.open_drawer),
+           onNavIconClick = { }
        )
     }
 }
