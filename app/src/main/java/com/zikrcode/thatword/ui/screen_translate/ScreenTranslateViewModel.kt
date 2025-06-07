@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,16 +30,21 @@ class ScreenTranslateViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    companion object {
-        const val LANGUAGES_TIMEOUT = 3000L
-    }
-
     private val _uiState = MutableStateFlow(ScreenTranslateUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         refreshServiceStatus()
         readLanguages()
+        observeLanguagesUpdates()
+    }
+
+    private fun refreshServiceStatus() {
+        val isServiceRunning = context.isServiceCurrentlyRunning(ScreenTranslateService::class.java)
+        _uiState.update { state ->
+            state.copy(isServiceRunning = isServiceRunning)
+        }
+        if (isServiceRunning) bindService()
     }
 
     private fun readLanguages() {
@@ -53,7 +57,7 @@ class ScreenTranslateViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val pair = withTimeoutOrNull(LANGUAGES_TIMEOUT) {
+            val pair = userRepository.loadWithTimeoutOrNull {
                 combine(
                     userRepository.readInputLanguage(),
                     userRepository.readOutputLanguage()
@@ -61,7 +65,7 @@ class ScreenTranslateViewModel @Inject constructor(
                     if (input != null && output != null) input to output else null
                 }
                     .filterNotNull()
-                    .first() // Waits for the first non-null pair or times out
+                    .first()
             }
 
             val (inputLanguage, outputLanguage) = pair
@@ -74,30 +78,31 @@ class ScreenTranslateViewModel @Inject constructor(
                     isLoading = false
                 )
             }
-
-            // Continue collecting real updates from the flows
-            combine(
-                userRepository.readInputLanguage(),
-                userRepository.readOutputLanguage()
-            ) { input, output ->
-                input to output
-            }.collect { (input, output) ->
-                _uiState.update { state ->
-                    state.copy(
-                        inputLanguage = input ?: state.inputLanguage,
-                        outputLanguage = output ?: state.outputLanguage
-                    )
-                }
-            }
         }
     }
 
-    private fun refreshServiceStatus() {
-        val isServiceRunning = context.isServiceCurrentlyRunning(ScreenTranslateService::class.java)
-        _uiState.update { state ->
-            state.copy(isServiceRunning = isServiceRunning)
+    private fun observeLanguagesUpdates() {
+        viewModelScope.apply {
+            launch {
+                userRepository.readInputLanguage()
+                    .filterNotNull()
+                    .collect { input ->
+                        _uiState.update { state ->
+                            state.copy(inputLanguage = input)
+                        }
+                    }
+            }
+
+            launch {
+                userRepository.readOutputLanguage()
+                    .filterNotNull()
+                    .collect { output ->
+                        _uiState.update { state ->
+                            state.copy(outputLanguage = output)
+                        }
+                    }
+            }
         }
-        if (isServiceRunning) bindService()
     }
 
     fun onEvent(event: ScreenTranslateUiEvent) {

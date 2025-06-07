@@ -6,6 +6,7 @@ import android.media.projection.MediaProjectionManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,17 +34,20 @@ import com.zikrcode.thatword.ui.utils.Permissions
 import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
 import com.zikrcode.thatword.ui.common.composables.AppContentLoading
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
+import com.zikrcode.thatword.ui.screen_translate.component.CustomizeBoxCard
 import com.zikrcode.thatword.ui.screen_translate.component.CentralBoxCard
 
 @Composable
 fun ScreenTranslateScreen(
-    openDrawer: () -> Unit,
+    onOpenDrawer: () -> Unit,
+    onOpenCustomize: () -> Unit,
     viewModel: ScreenTranslateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ScreenTranslateScreenContent(
-        openDrawer = openDrawer,
+        onOpenDrawer = onOpenDrawer,
+        onOpenCustomize = onOpenCustomize,
         isLoading = uiState.isLoading,
         isServiceRunning = uiState.isServiceRunning,
         languages = uiState.supportedLanguages,
@@ -57,10 +62,11 @@ fun ScreenTranslateScreen(
 private fun ScreenTranslateScreenContentPreview() {
     AppTheme {
         ScreenTranslateScreenContent(
-            openDrawer = { },
-            isLoading = true,
+            onOpenDrawer = { },
+            onOpenCustomize = { },
+            isLoading = false,
             isServiceRunning = true,
-            languages = emptyList(),
+            languages = listOf(Language("en"), Language("ru")),
             inputLanguage = Language("en"),
             outputLanguage = Language("ru"),
             onEvent = { }
@@ -70,7 +76,8 @@ private fun ScreenTranslateScreenContentPreview() {
 
 @Composable
 private fun ScreenTranslateScreenContent(
-    openDrawer: () -> Unit,
+    onOpenDrawer: () -> Unit,
+    onOpenCustomize: () -> Unit,
     isLoading: Boolean,
     isServiceRunning: Boolean,
     languages: List<Language>,
@@ -90,7 +97,9 @@ private fun ScreenTranslateScreenContent(
         topBar = {
             AppTopBar(
                 title = stringResource(R.string.screen_translate),
-                openDrawer = openDrawer
+                navIcon = painterResource(R.drawable.ic_menu),
+                navIconDescription = stringResource(R.string.open_drawer),
+                onNavIconClick = onOpenDrawer
             )
         },
         containerColor = AppTheme.colorScheme.background
@@ -143,6 +152,9 @@ private fun ScreenTranslateScreenContent(
                         onEvent.invoke(ScreenTranslateUiEvent.SwapLanguages)
                     }
                 )
+                AnimatedVisibility(visible = isServiceRunning) {
+                    CustomizeBoxCard(onClick = onOpenCustomize)
+                }
             }
         }
     }

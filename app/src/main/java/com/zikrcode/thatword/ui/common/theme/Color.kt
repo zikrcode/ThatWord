@@ -2,6 +2,7 @@ package com.zikrcode.thatword.ui.common.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 
 object AppColor {
     val MAIN = Color(0xFF6D1CBD)
@@ -16,6 +17,15 @@ object AppColor {
     val WHITE = Color(0xFFFFFFFF)
     val RUSTY_RED = Color(0xFFD7263D)
     val PARADISE_PINK = Color(0xFFE94B5B)
+    val TRANSPARENT = Color.Transparent
+
+    val selectableColorsArgb = setOf(
+        Color.Black, Color.DarkGray, Color.Gray, Color.LightGray, Color.White,
+        Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan, Color.Magenta,
+        MAIN, MAIN_LIGHT, TRANSPARENT,
+    ).map { color ->
+        color.toArgb()
+    }
 }
 
 @Immutable
