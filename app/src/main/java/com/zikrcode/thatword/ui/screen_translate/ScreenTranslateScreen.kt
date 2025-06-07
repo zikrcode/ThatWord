@@ -34,20 +34,20 @@ import com.zikrcode.thatword.ui.utils.Permissions
 import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
 import com.zikrcode.thatword.ui.common.composables.AppContentLoading
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
-import com.zikrcode.thatword.ui.screen_translate.component.AppearanceBoxCard
+import com.zikrcode.thatword.ui.screen_translate.component.CustomizeBoxCard
 import com.zikrcode.thatword.ui.screen_translate.component.CentralBoxCard
 
 @Composable
 fun ScreenTranslateScreen(
     onOpenDrawer: () -> Unit,
-    onOpenAppearance: () -> Unit,
+    onOpenCustomize: () -> Unit,
     viewModel: ScreenTranslateViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ScreenTranslateScreenContent(
         onOpenDrawer = onOpenDrawer,
-        onOpenAppearance = onOpenAppearance,
+        onOpenCustomize = onOpenCustomize,
         isLoading = uiState.isLoading,
         isServiceRunning = uiState.isServiceRunning,
         languages = uiState.supportedLanguages,
@@ -63,7 +63,7 @@ private fun ScreenTranslateScreenContentPreview() {
     AppTheme {
         ScreenTranslateScreenContent(
             onOpenDrawer = { },
-            onOpenAppearance = { },
+            onOpenCustomize = { },
             isLoading = false,
             isServiceRunning = true,
             languages = listOf(Language("en"), Language("ru")),
@@ -77,7 +77,7 @@ private fun ScreenTranslateScreenContentPreview() {
 @Composable
 private fun ScreenTranslateScreenContent(
     onOpenDrawer: () -> Unit,
-    onOpenAppearance: () -> Unit,
+    onOpenCustomize: () -> Unit,
     isLoading: Boolean,
     isServiceRunning: Boolean,
     languages: List<Language>,
@@ -153,7 +153,7 @@ private fun ScreenTranslateScreenContent(
                     }
                 )
                 AnimatedVisibility(visible = isServiceRunning) {
-                    AppearanceBoxCard(onClick = onOpenAppearance)
+                    CustomizeBoxCard(onClick = onOpenCustomize)
                 }
             }
         }

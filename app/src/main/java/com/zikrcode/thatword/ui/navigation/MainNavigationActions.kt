@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 
 // Routes inside ScreenTranslate nested graph
 @Serializable object ScreenTranslate
-@Serializable object Appearance
+@Serializable object Customize
 
 // Routes
 @Serializable object Translate
@@ -26,8 +26,8 @@ class MainNavigationActions(private val navController: NavHostController) {
         }
     }
 
-    fun navigateToAppearance() {
-        navController.navigate(Appearance) {
+    fun navigateToCustomize() {
+        navController.navigate(Customize) {
             launchSingleTop = true
             restoreState = true
         }

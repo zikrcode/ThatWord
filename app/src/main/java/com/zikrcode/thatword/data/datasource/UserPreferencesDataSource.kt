@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -37,5 +39,31 @@ class UserPreferencesDataSource @Inject constructor(@ApplicationContext context:
         .map { preferences ->
             val stringKey = stringPreferencesKey(key)
             preferences[stringKey]
+        }
+
+    suspend fun saveIntPreference(key: String, value: Int) {
+        dataStore.edit { preferences ->
+            val intKey = intPreferencesKey(key)
+            preferences[intKey] = value
+        }
+    }
+
+    fun readIntPreference(key: String): Flow<Int?> = dataStore.data
+        .map { preferences ->
+            val intKey = intPreferencesKey(key)
+            preferences[intKey]
+        }
+
+    suspend fun saveBooleanPreference(key: String, value: Boolean) {
+        dataStore.edit { preferences ->
+            val booleanKey = booleanPreferencesKey(key)
+            preferences[booleanKey] = value
+        }
+    }
+
+    fun readBooleanPreference(key: String): Flow<Boolean?> = dataStore.data
+        .map { preferences ->
+            val booleanKey = booleanPreferencesKey(key)
+            preferences[booleanKey]
         }
 }

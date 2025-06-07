@@ -27,7 +27,7 @@ import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
 @Composable
-fun AppearanceBoxCard(
+fun CustomizeBoxCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -42,7 +42,7 @@ fun AppearanceBoxCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_format_paint),
+            painter = painterResource(R.drawable.ic_customize),
             contentDescription = null,
             modifier = Modifier
                 .padding(Dimens.SpacingDouble)
@@ -50,7 +50,7 @@ fun AppearanceBoxCard(
             tint = AppTheme.colorScheme.main
         )
         Text(
-            text = stringResource(R.string.appearance),
+            text = stringResource(R.string.customize),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleMedium,
             color = AppTheme.colorScheme.main
@@ -68,7 +68,7 @@ private fun AppearanceBoxCardPreview() {
                 .background(AppTheme.colorScheme.background),
             contentAlignment = Alignment.BottomCenter
         ) {
-            AppearanceBoxCard(
+            CustomizeBoxCard(
                 onClick = { }
             )
         }

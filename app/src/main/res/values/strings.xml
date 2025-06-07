@@ -4,10 +4,9 @@
 
     <!-- AppCircleCardWithIcon -->
     <string name="close">Close</string>
-    <string name="move">Move</string>
 
     <!-- AppTopBar -->
-    <string name="open_drawer">Open Drawer</string>
+    <string name="open_drawer">Open drawer</string>
 
     <!-- MainDrawer -->
     <string name="screen_translate">Screen Translate</string>
@@ -32,16 +31,24 @@
         <string name="stop">Stop</string>
 
         <!-- LanguageSelector -->
-        <string name="translate_from">Translate From</string>
-        <string name="translate_to">Translate To</string>
+        <string name="translate_from">Translate from</string>
+        <string name="translate_to">Translate to</string>
 
         <!-- ScreenTranslateService -->
         <string name="screen_translate_channel_name">Screen Translate</string>
 
-        <!-- AppearanceBoxCard -->
-        <string name="appearance">Appearance</string>
+        <!-- CustomizeBoxCard -->
+        <string name="customize">Customize</string>
 
         <!-- AppearanceScreen -->
-        <string name="navigate_back">Navigate Back</string>
+        <string name="navigate_back">Navigate back</string>
+
+            <!-- TextStyleSection -->
+            <string name="text_style">Text Style</string>
+            <string name="text_color">Text color</string>
+            <string name="background_color">Background color</string>
+            <string name="select_color">Select color</string>
+            <string name="uppercase_text">Uppercase text</string>"
+
 
 </resources>

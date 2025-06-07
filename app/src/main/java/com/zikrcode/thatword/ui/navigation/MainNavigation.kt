@@ -16,7 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.zikrcode.thatword.ui.screen_translate.ScreenTranslateScreen
-import com.zikrcode.thatword.ui.screen_translate.appearance.AppearanceScreen
+import com.zikrcode.thatword.ui.screen_translate.customize.CustomizeScreen
 import com.zikrcode.thatword.ui.translate.TranslateScreen
 import kotlinx.coroutines.launch
 
@@ -28,7 +28,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
     val currentRoute = navBackStackEntry?.destination?.let { navDestination ->
         when {
             navDestination.hasRoute(ScreenTranslate::class) -> ScreenTranslate
-            navDestination.hasRoute(Appearance::class) -> Appearance
+            navDestination.hasRoute(Customize::class) -> Customize
             else -> Translate
         }
     } ?: startDestination
@@ -53,7 +53,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
             )
         },
         drawerState = drawerState,
-        gesturesEnabled = currentRoute != Appearance
+        gesturesEnabled = currentRoute != Customize
     ) {
         NavHost(
             navController = navController,
@@ -85,17 +85,17 @@ private fun NavGraphBuilder.screenTranslateNavGraph(
         composable<ScreenTranslate> {
             ScreenTranslateScreen(
                 onOpenDrawer = onOpenDrawer,
-                onOpenAppearance = {
-                    navActions.navigateToAppearance()
+                onOpenCustomize = {
+                    navActions.navigateToCustomize()
                 }
             )
         }
 
-        composable<Appearance>(
+        composable<Customize>(
             enterTransition = null,
             exitTransition = null
         ) {
-            AppearanceScreen(
+            CustomizeScreen(
                 onBack = {
                     navActions.navigateToScreenTranslate()
                 }
