@@ -33,14 +33,12 @@ class OcrDataSource @Inject constructor() {
 
         recognizer.process(inputImage)
             .addOnSuccessListener { visionText ->
-                val detectedTextWithBounds = visionText.textBlocks.flatMap { block ->
-                    block.lines.mapNotNull { line ->
-                        line.boundingBox?.let { rect ->
-                            TextWithBounds(
-                                text = line.text,
-                                bounds = rect
-                            )
-                        }
+                val detectedTextWithBounds = visionText.textBlocks.mapNotNull { block ->
+                    block.boundingBox?.let { box ->
+                        TextWithBounds(
+                            text = block.text,
+                            bounds = box
+                        )
                     }
                 }
                 continuation.resume(detectedTextWithBounds)
