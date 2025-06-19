@@ -17,12 +17,13 @@ object AppColor {
     val WHITE = Color(0xFFFFFFFF)
     val RUSTY_RED = Color(0xFFD7263D)
     val PARADISE_PINK = Color(0xFFE94B5B)
-    val TRANSPARENT = Color.Transparent
+    val BLACK = Color.Black
+    val LIGHT_GRAY = Color.LightGray
 
     val selectableColorsArgb = setOf(
-        Color.Black, Color.DarkGray, Color.Gray, Color.LightGray, Color.White,
+        BLACK, Color.DarkGray, Color.Gray, Color.LightGray, Color.White,
         Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Cyan, Color.Magenta,
-        MAIN, MAIN_LIGHT, TRANSPARENT,
+        MAIN, MAIN_LIGHT
     ).map { color ->
         color.toArgb()
     }

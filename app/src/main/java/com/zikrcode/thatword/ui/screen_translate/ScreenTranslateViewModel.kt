@@ -10,6 +10,7 @@ import com.zikrcode.thatword.data.repository.UserRepository
 import com.zikrcode.thatword.domain.models.Language
 import com.zikrcode.thatword.ui.screen_translate.component.LanguageDirection
 import com.zikrcode.thatword.ui.screen_translate.service.ScreenTranslateService
+import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.utils.extensions.isServiceCurrentlyRunning
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,8 +69,10 @@ class ScreenTranslateViewModel @Inject constructor(
                     .first()
             }
 
-            val (inputLanguage, outputLanguage) = pair
-                ?: (languages.first() to languages.last()) // fallback if timeout occurs
+            val (inputLanguage, outputLanguage) = pair ?: (
+                    // fallback if timeout occurs
+                    AppConstants.defaultInputLanguage(languages) to AppConstants.defaultOutputLanguage(languages)
+            )
 
             _uiState.update { state ->
                 state.copy(

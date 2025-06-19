@@ -53,6 +53,7 @@ class ScreenTranslateService : OverlayService() {
     }
 
     @Inject lateinit var screenReaderFactory: ScreenReader.Factory
+    @Inject lateinit var imageTranslator: ImageTranslator
     private lateinit var overlayManager: ScreenTranslateOverlayManager
     private lateinit var screenReader: ScreenReader
     private var stopServiceCallback: (() -> Unit)? = null
@@ -122,9 +123,9 @@ class ScreenTranslateService : OverlayService() {
     }
 
     private suspend fun translateScreen(): ImageBitmap? {
-        val imageBitmap = screenReader.translate()
-        println("Translated ImageBitmap: $imageBitmap")
-        return imageBitmap
+        val bitmap = screenReader.capturedImageBitmap() ?: return null
+        val translatedImageBitmap = imageTranslator.translate(bitmap)
+        return translatedImageBitmap
     }
 
     fun setStopServiceCallback(callback: () -> Unit) {
