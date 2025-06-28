@@ -15,10 +15,10 @@ import com.zikrcode.thatword.data.repository.VisionProcessingRepository
 import com.zikrcode.thatword.domain.models.TextWithBounds
 import com.zikrcode.thatword.domain.models.TextWithTranslation
 import com.zikrcode.thatword.ui.utils.AppConstants
-import com.zikrcode.thatword.utils.extensions.toMutable
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import androidx.core.graphics.withTranslation
+import com.zikrcode.thatword.utils.extensions.toTransparent
 
 class ImageTranslator @Inject constructor(
     private val languageProcessingRepository: LanguageProcessingRepository,
@@ -74,8 +74,8 @@ class ImageTranslator @Inject constructor(
         bitmap: Bitmap,
         translationsMap: Map<TextWithBounds, TextWithTranslation>
     ): ImageBitmap {
-        val mutableBitmap = bitmap.toMutable()
-        val canvas = Canvas(mutableBitmap)
+        val transparentBitmap = bitmap.toTransparent()
+        val canvas = Canvas(transparentBitmap)
         val textPaint = createBaseTextPaint()
         val backgroundPaint = createBackgroundPaint()
 
@@ -88,7 +88,7 @@ class ImageTranslator @Inject constructor(
                 backgroundPaint = backgroundPaint
             )
         }
-        return mutableBitmap.asImageBitmap()
+        return transparentBitmap.asImageBitmap()
     }
 
     private suspend fun createBaseTextPaint(): TextPaint {

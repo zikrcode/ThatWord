@@ -7,7 +7,11 @@ import android.view.View
 import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
@@ -17,10 +21,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.zikrcode.thatword.ui.screen_translate.service.component.OverlayControlView
+import com.zikrcode.thatword.ui.screen_translate.service.component.OverlayControlViewWidth
+import com.zikrcode.thatword.ui.screen_translate.service.component.OverlayImageView
 import com.zikrcode.thatword.ui.utils.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.px
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -51,16 +57,21 @@ class ScreenTranslateOverlayManager(
 
             setContent {
                 var currentOffset = remember { offset }
+                var isTranslating by rememberSaveable {
+                    mutableStateOf(false)
+                }
 
                 OverlayControlView(
+                    translating = isTranslating,
                     onCloseClick = onCloseClick,
                     onTranslateClick = {
+                        isTranslating = true
                         saveControlViewOffset(currentOffset)
-                        removeOverlayControlView {
-                            overlayService.lifecycleScope.launch {
-                                delay(200) // to capture screen without control view
-                                val imageBitmap = onTranslateClick.invoke()
+                        overlayService.lifecycleScope.launch {
+                            val imageBitmap = onTranslateClick.invoke()
+                            removeOverlayControlView {
                                 displayOverlayImageView(imageBitmap)
+                                isTranslating = false
                             }
                         }
                     },
