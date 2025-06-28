@@ -32,14 +32,21 @@ class CustomizeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val triple = userRepository.loadWithTimeoutOrNull {
+            val preferences = userRepository.loadWithTimeoutOrNull {
                 combine(
+                    userRepository.readIconColor(),
                     userRepository.readTextColor(),
                     userRepository.readTextBackgroundColor(),
                     userRepository.readUppercaseText()
-                ) { textColor, backgroundColor, uppercaseText ->
-                    if (textColor != null && backgroundColor != null && uppercaseText != null) {
-                        Triple(textColor, backgroundColor, uppercaseText)
+                ) { iconColorArgb, textColorArgb, backgroundColorArgb, uppercaseText ->
+                    if (iconColorArgb != null && textColorArgb != null &&
+                        backgroundColorArgb != null && uppercaseText != null) {
+                        UserPreferences(
+                            iconColorArgb = iconColorArgb,
+                            textColorArgb = textColorArgb,
+                            backgroundColorArgb = backgroundColorArgb,
+                            uppercaseText = uppercaseText
+                        )
                     } else {
                         null
                     }
@@ -48,13 +55,13 @@ class CustomizeViewModel @Inject constructor(
                     .first()
             }
 
-            if (triple != null) {
-                val (textColor, backgroundColor, uppercaseText) = triple
+            if (preferences != null) {
                 _uiState.update { state ->
                     state.copy(
-                        textColorArgb = textColor,
-                        textBackgroundColorArgb = backgroundColor,
-                        uppercaseText = uppercaseText,
+                        iconColorArgb = preferences.iconColorArgb,
+                        textColorArgb = preferences.textColorArgb,
+                        textBackgroundColorArgb = preferences.backgroundColorArgb,
+                        uppercaseText = preferences.uppercaseText,
                         isLoading = false
                     )
                 }
@@ -66,6 +73,16 @@ class CustomizeViewModel @Inject constructor(
 
     private fun observePreferenceUpdates() {
         viewModelScope.apply {
+            launch {
+                userRepository.readIconColor()
+                    .filterNotNull()
+                    .collect { argb ->
+                        _uiState.update { state ->
+                            state.copy(iconColorArgb = argb)
+                        }
+                    }
+            }
+
             launch {
                 userRepository.readTextColor()
                     .filterNotNull()
@@ -100,9 +117,16 @@ class CustomizeViewModel @Inject constructor(
 
     fun onEvent(event: CustomizeUiEvent) {
         when (event) {
+            is CustomizeUiEvent.ChangeIconColor -> changeIconColor(event.argb)
             is CustomizeUiEvent.ChangeTextColor -> changeTextColor(event.argb)
             is CustomizeUiEvent.ChangeTextBackgroundColor -> changeTextBackgroundColor(event.argb)
             is CustomizeUiEvent.ChangeUppercaseText -> changeUppercaseText(event.uppercase)
+        }
+    }
+
+    private fun changeIconColor(argb: Int) {
+        viewModelScope.launch {
+            userRepository.saveIconColor(argb)
         }
     }
 
@@ -124,3 +148,10 @@ class CustomizeViewModel @Inject constructor(
         }
     }
 }
+
+private data class UserPreferences(
+    val iconColorArgb: Int,
+    val textColorArgb: Int,
+    val backgroundColorArgb: Int,
+    val uppercaseText: Boolean
+)

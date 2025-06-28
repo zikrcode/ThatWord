@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,13 +15,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -35,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,70 +39,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppBottomSheet
-import com.zikrcode.thatword.ui.common.composables.AppHorizontalDivider
 import com.zikrcode.thatword.ui.common.theme.AppColor
 import com.zikrcode.thatword.ui.common.theme.AppTheme
+import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
 import kotlinx.coroutines.launch
 
-private val TextStyleItemHeight = 60.dp
-
-@Composable
-fun TextStyleSection(
-    textColorArgb: Int,
-    onTextColorArgbChange: (Int) -> Unit,
-    textBackgroundColorArgb: Int,
-    onTextBackgroundColorArgbChange: (Int) -> Unit,
-    uppercaseText: Boolean,
-    onUppercaseTextChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(Dimens.SpacingDouble)
-            )
-            .background(AppTheme.colorScheme.container),
-    ) {
-        Text(
-            text = stringResource(R.string.text_style),
-            modifier = Modifier.padding(
-                start = Dimens.SpacingDouble,
-                top = Dimens.SpacingDouble
-            ),
-            color = AppTheme.colorScheme.main,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Column(modifier = Modifier.padding(Dimens.SpacingDouble)) {
-            AppHorizontalDivider()
-            ColorPickerItem(
-                text = stringResource(R.string.text_color),
-                colorArgb = textColorArgb,
-                onColorArgbChange = onTextColorArgbChange
-            )
-            AppHorizontalDivider()
-            ColorPickerItem(
-                text = stringResource(R.string.background_color),
-                colorArgb = textBackgroundColorArgb,
-                onColorArgbChange = onTextBackgroundColorArgbChange
-            )
-            AppHorizontalDivider()
-            SwitchItem(
-                text = stringResource(R.string.uppercase_text),
-                checked = uppercaseText,
-                onCheckedChange = onUppercaseTextChange
-            )
-            AppHorizontalDivider()
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ColorPickerItem(
+fun PrefColorPickerItem(
     text: String,
     colorArgb: Int,
     onColorArgbChange: (Int) -> Unit
@@ -119,7 +59,7 @@ private fun ColorPickerItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(TextStyleItemHeight)
+            .height(StyleItemHeight)
             .clickable { showBottomSheet = true }
             .padding(horizontal = Dimens.SpacingSingleHalf),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -213,55 +153,18 @@ private fun CircularColorButton(
     }
 }
 
-@Composable
-private fun SwitchItem(
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(TextStyleItemHeight)
-            .clickable {
-                onCheckedChange.invoke(!checked)
-            }
-            .padding(Dimens.SpacingSingleHalf),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = text,
-            color = AppTheme.colorScheme.text,
-            fontSize = 18.sp,
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Switch(
-            checked = checked,
-            onCheckedChange = null,
-            colors = SwitchDefaults.colors().copy(
-                checkedThumbColor = AppTheme.colorScheme.main,
-                checkedTrackColor = AppTheme.colorScheme.container,
-                checkedBorderColor = AppTheme.colorScheme.text,
-                uncheckedThumbColor = AppTheme.colorScheme.text,
-                uncheckedTrackColor = AppTheme.colorScheme.container,
-                uncheckedBorderColor = AppTheme.colorScheme.text,
-            )
-        )
-    }
-}
-
 @PreviewLightDark
 @Composable
-private fun TextStyleSectionPreview() {
+private fun PrefColorPickerItemPreview() {
     AppTheme {
-        TextStyleSection(
-            textColorArgb = Color.Green.toArgb(),
-            onTextColorArgbChange = { },
-            textBackgroundColorArgb = Color.Black.toArgb(),
-            onTextBackgroundColorArgbChange = { },
-            uppercaseText = false,
-            onUppercaseTextChange = { }
-        )
+        Box(
+            modifier = Modifier.background(AppTheme.colorScheme.background)
+        ) {
+            PrefColorPickerItem(
+                text = "Label",
+                colorArgb = AppConstants.DEFAULT_TEXT_BACKGROUND_COLOR_ARGB,
+                onColorArgbChange = { }
+            )
+        }
     }
 }
