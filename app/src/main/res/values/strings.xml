@@ -42,13 +42,12 @@
 
         <!-- AppearanceScreen -->
         <string name="navigate_back">Navigate back</string>
-
-            <!-- TextStyleSection -->
-            <string name="text_style">Text Style</string>
-            <string name="text_color">Text color</string>
-            <string name="background_color">Background color</string>
-            <string name="select_color">Select color</string>
-            <string name="uppercase_text">Uppercase text</string>"
-
+        <string name="text_style">Text Style</string>
+        <string name="text_color">Text color</string>
+        <string name="background_color">Background color</string>
+        <string name="select_color">Select color</string>
+        <string name="uppercase_text">Uppercase text</string>"
+        <string name="icon_style">Icon Style</string>
+        <string name="icon_color">Icon color</string>
 
 </resources>

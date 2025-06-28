@@ -1,14 +1,14 @@
 package com.zikrcode.thatword.ui.screen_translate.customize
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -16,9 +16,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppContentLoading
+import com.zikrcode.thatword.ui.common.composables.AppHorizontalDivider
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
 import com.zikrcode.thatword.ui.common.theme.AppTheme
-import com.zikrcode.thatword.ui.screen_translate.customize.component.TextStyleSection
+import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefColorPickerItem
+import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefSwitchItem
+import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefWithLabelContainer
+import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
 
 @Composable
@@ -31,6 +35,7 @@ fun CustomizeScreen(
     CustomizeContent(
         onBack = onBack,
         isLoading = uiState.isLoading,
+        iconColorArgb = uiState.iconColorArgb,
         textColorArgb = uiState.textColorArgb,
         textBackgroundColorArgb = uiState.textBackgroundColorArgb,
         uppercaseText = uiState.uppercaseText,
@@ -45,8 +50,9 @@ private fun CustomizeScreenContentPreview() {
         CustomizeContent(
             onBack = { },
             isLoading = false,
-            textColorArgb = Color.Red.toArgb(),
-            textBackgroundColorArgb = Color.Yellow.toArgb(),
+            iconColorArgb = AppConstants.DEFAULT_ICON_COLOR_ARGB,
+            textColorArgb = AppConstants.DEFAULT_TEXT_COLOR_ARGB,
+            textBackgroundColorArgb = AppConstants.DEFAULT_TEXT_BACKGROUND_COLOR_ARGB,
             uppercaseText = false,
             onEvent = { }
         )
@@ -57,6 +63,7 @@ private fun CustomizeScreenContentPreview() {
 private fun CustomizeContent(
     onBack: () -> Unit,
     isLoading: Boolean,
+    iconColorArgb: Int,
     textColorArgb: Int,
     textBackgroundColorArgb: Int,
     uppercaseText: Boolean,
@@ -84,8 +91,16 @@ private fun CustomizeContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = Dimens.SpacingDouble)
+                    .padding(horizontal = Dimens.SpacingDouble),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingDouble),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                IconStyleSection(
+                    iconColorArgb = iconColorArgb,
+                    onIconColorArgbChange = { argb ->
+                        onEvent.invoke(CustomizeUiEvent.ChangeIconColor(argb))
+                    }
+                )
                 TextStyleSection(
                     textColorArgb = textColorArgb,
                     onTextColorArgbChange = { argb ->
@@ -102,5 +117,57 @@ private fun CustomizeContent(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun IconStyleSection(
+    iconColorArgb: Int,
+    onIconColorArgbChange: (Int) -> Unit
+) {
+    PrefWithLabelContainer(
+        label = stringResource(R.string.icon_style)
+    ) {
+        AppHorizontalDivider()
+        PrefColorPickerItem(
+            text = stringResource(R.string.icon_color),
+            colorArgb = iconColorArgb,
+            onColorArgbChange = onIconColorArgbChange
+        )
+        AppHorizontalDivider()
+    }
+}
+
+@Composable
+private fun TextStyleSection(
+    textColorArgb: Int,
+    onTextColorArgbChange: (Int) -> Unit,
+    textBackgroundColorArgb: Int,
+    onTextBackgroundColorArgbChange: (Int) -> Unit,
+    uppercaseText: Boolean,
+    onUppercaseTextChange: (Boolean) -> Unit
+) {
+    PrefWithLabelContainer(
+        label = stringResource(R.string.text_style)
+    ) {
+        AppHorizontalDivider()
+        PrefColorPickerItem(
+            text = stringResource(R.string.text_color),
+            colorArgb = textColorArgb,
+            onColorArgbChange = onTextColorArgbChange
+        )
+        AppHorizontalDivider()
+        PrefColorPickerItem(
+            text = stringResource(R.string.background_color),
+            colorArgb = textBackgroundColorArgb,
+            onColorArgbChange = onTextBackgroundColorArgbChange
+        )
+        AppHorizontalDivider()
+        PrefSwitchItem(
+            text = stringResource(R.string.uppercase_text),
+            checked = uppercaseText,
+            onCheckedChange = onUppercaseTextChange
+        )
+        AppHorizontalDivider()
     }
 }

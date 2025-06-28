@@ -10,12 +10,14 @@ import android.os.Binder
 import android.os.IBinder
 import androidx.compose.ui.graphics.ImageBitmap
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.data.repository.UserRepository
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Notifications
 import com.zikrcode.thatword.utils.AppConstants
 import com.zikrcode.thatword.utils.extensions.parcelable
 import com.zikrcode.thatword.ui.utils.OverlayService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filterNotNull
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -54,6 +56,7 @@ class ScreenTranslateService : OverlayService() {
 
     @Inject lateinit var screenReaderFactory: ScreenReader.Factory
     @Inject lateinit var imageTranslator: ImageTranslator
+    @Inject lateinit var userRepository: UserRepository
     private lateinit var overlayManager: ScreenTranslateOverlayManager
     private lateinit var screenReader: ScreenReader
     private var stopServiceCallback: (() -> Unit)? = null
@@ -63,7 +66,8 @@ class ScreenTranslateService : OverlayService() {
         overlayManager = ScreenTranslateOverlayManager(
             overlayService = this,
             onCloseClick = ::stopService,
-            onTranslateClick = ::translateScreen
+            onTranslateClick = ::translateScreen,
+            iconColorArgb = userRepository.readIconColor().filterNotNull()
         )
     }
 

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
 import com.zikrcode.thatword.ui.common.theme.AppTheme
+import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
 
 val OverlayControlViewWidth = 60.dp
@@ -41,6 +42,7 @@ val OverlayControlViewHeight = 100.dp
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OverlayControlView(
+    iconColorArgb: Int,
     translating: Boolean,
     onCloseClick: () -> Unit,
     onTranslateClick: () -> Unit,
@@ -76,7 +78,7 @@ fun OverlayControlView(
                 .clip(CircleShape)
                 .border(
                     width = 2.dp,
-                    color = AppTheme.colorScheme.main,
+                    color = Color(iconColorArgb),
                     shape = CircleShape
                 )
                 .background(
@@ -92,11 +94,11 @@ fun OverlayControlView(
             contentAlignment = Alignment.Center
         ) {
             if (translating) {
-                DotsPulsingLoading()
+                DotsPulsingLoading(iconColorArgb)
             } else {
                 Icon(
                     painter = painterResource(R.drawable.icon),
-                    tint = AppTheme.colorScheme.main,
+                    tint = Color(iconColorArgb),
                     contentDescription = null,
                     modifier = Modifier.size(60.dp)
                 )
@@ -142,6 +144,7 @@ private fun SmallCircleButton(
 private fun OverlayControlViewPreview() {
     AppTheme {
         OverlayControlView(
+            iconColorArgb = AppConstants.DEFAULT_ICON_COLOR_ARGB,
             translating = false,
             onCloseClick = { },
             onTranslateClick = { }

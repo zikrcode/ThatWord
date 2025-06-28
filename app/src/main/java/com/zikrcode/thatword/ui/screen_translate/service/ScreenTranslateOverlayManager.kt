@@ -7,6 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,14 +25,17 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.zikrcode.thatword.ui.screen_translate.service.component.OverlayControlView
 import com.zikrcode.thatword.ui.screen_translate.service.component.OverlayControlViewWidth
 import com.zikrcode.thatword.ui.screen_translate.service.component.OverlayImageView
+import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.ui.utils.OverlayService
 import com.zikrcode.thatword.utils.Dimens
 import com.zikrcode.thatword.utils.extensions.px
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class ScreenTranslateOverlayManager(
     private val overlayService: OverlayService,
+    private val iconColorArgb: Flow<Int>,
     private val onCloseClick: () -> Unit,
     private val onTranslateClick: suspend () -> ImageBitmap?
 ) {
@@ -60,8 +64,12 @@ class ScreenTranslateOverlayManager(
                 var isTranslating by rememberSaveable {
                     mutableStateOf(false)
                 }
+                val iconColorArgb by iconColorArgb.collectAsState(
+                    initial = AppConstants.DEFAULT_ICON_COLOR_ARGB
+                )
 
                 OverlayControlView(
+                    iconColorArgb = iconColorArgb,
                     translating = isTranslating,
                     onCloseClick = onCloseClick,
                     onTranslateClick = {

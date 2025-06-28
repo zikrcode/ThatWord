@@ -16,6 +16,8 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.ui.common.theme.AppTheme
@@ -27,7 +29,10 @@ private const val Duration = NumberOfDots * DelayUnit
 private val DotSize = Dimens.SpacingSingle
 
 @Composable
-fun DotsPulsingLoading(modifier: Modifier = Modifier) {
+fun DotsPulsingLoading(
+    colorArgb: Int,
+    modifier: Modifier = Modifier
+) {
     val scales = arrayListOf<State<Float>>()
     repeat(NumberOfDots) { index ->
         scales.add(animateScaleWithDelay(delay = index * DelayUnit))
@@ -44,7 +49,7 @@ fun DotsPulsingLoading(modifier: Modifier = Modifier) {
                     .size(DotSize)
                     .scale(scale.value)
                     .background(
-                        color = AppTheme.colorScheme.main,
+                        color = Color(colorArgb),
                         shape = CircleShape
                     )
             )
@@ -73,6 +78,8 @@ private fun animateScaleWithDelay(delay: Int): State<Float> {
 @Composable
 private fun DotsPulsingLoadingPreview() {
     AppTheme {
-        DotsPulsingLoading()
+        DotsPulsingLoading(
+            colorArgb = AppTheme.colorScheme.main.toArgb()
+        )
     }
 }

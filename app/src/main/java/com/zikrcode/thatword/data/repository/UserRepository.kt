@@ -15,6 +15,7 @@ class UserRepository @Inject constructor(
         private const val PREFERENCES_TIMEOUT = 3000L
         private const val INPUT_LANGUAGE_KEY = "input_language"
         private const val OUTPUT_LANGUAGE_KEY = "output_language"
+        private const val ICON_COLOR_KEY = "icon_color"
         private const val TEXT_COLOR_KEY = "text_color"
         private const val TEXT_BACKGROUND_COLOR_KEY = "background_color"
         private const val UPPERCASE_TEXT_KEY = "uppercase_text"
@@ -51,6 +52,16 @@ class UserRepository @Inject constructor(
             .map { tag ->
                 if (tag != null) Language(tag) else null
             }
+
+    suspend fun saveIconColor(colorArgb: Int) {
+        userPreferencesDataSource.saveIntPreference(
+            key = ICON_COLOR_KEY,
+            value = colorArgb
+        )
+    }
+
+    fun readIconColor(): Flow<Int?> =
+        userPreferencesDataSource.readIntPreference(ICON_COLOR_KEY)
 
     suspend fun saveTextColor(colorArgb: Int) {
         userPreferencesDataSource.saveIntPreference(
