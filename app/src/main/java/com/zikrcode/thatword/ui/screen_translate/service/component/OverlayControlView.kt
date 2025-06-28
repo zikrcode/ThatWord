@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.screen_translate.service
+package com.zikrcode.thatword.ui.screen_translate.service.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +41,7 @@ val OverlayControlViewHeight = 100.dp
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OverlayControlView(
+    translating: Boolean,
     onCloseClick: () -> Unit,
     onTranslateClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -77,20 +80,27 @@ fun OverlayControlView(
                     shape = CircleShape
                 )
                 .background(
-                    color = AppTheme.colorScheme.background,
+                    color = Color.Transparent,
                     shape = CircleShape
                 )
                 .combinedClickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
                     onClick = onTranslateClick,
                     onLongClick = { closeable = !closeable }
                 ),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(R.drawable.icon),
-                tint = AppTheme.colorScheme.main,
-                contentDescription = null,
-                modifier = Modifier.size(60.dp)
-            )
+            if (translating) {
+                DotsPulsingLoading()
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.icon),
+                    tint = AppTheme.colorScheme.main,
+                    contentDescription = null,
+                    modifier = Modifier.size(60.dp)
+                )
+            }
         }
     }
 }
@@ -132,6 +142,7 @@ private fun SmallCircleButton(
 private fun OverlayControlViewPreview() {
     AppTheme {
         OverlayControlView(
+            translating = false,
             onCloseClick = { },
             onTranslateClick = { }
         )

@@ -1,6 +1,7 @@
 package com.zikrcode.thatword.utils.extensions
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.WindowInsets
 import android.view.WindowMetrics
 import androidx.core.graphics.createBitmap
@@ -23,4 +24,6 @@ fun Bitmap.isNotEmptyBitmap(): Boolean {
     return !this.sameAs(emptyBitmap)
 }
 
-fun Bitmap.toMutable(): Bitmap = this.copy(this.config, true)
+fun Bitmap.toTransparent(): Bitmap = createBitmap(width, height).apply {
+    eraseColor(Color.TRANSPARENT) // Make it fully transparent
+}
