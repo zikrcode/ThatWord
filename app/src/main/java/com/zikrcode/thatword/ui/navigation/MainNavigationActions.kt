@@ -10,18 +10,19 @@ import kotlinx.serialization.Serializable
 @Serializable object ScreenTranslate
 @Serializable object Customize
 
-// Routes
+// Route
 @Serializable object Translate
+
+// Route
+@Serializable object About
 
 class MainNavigationActions(private val navController: NavHostController) {
 
     fun navigateToScreenTranslate() {
         navController.navigate(ScreenTranslate) {
-            // avoid building up a large stack of destinations on the back stack
             popUpTo(ScreenTranslate) {
-                saveState = true
+                inclusive = true // clear everything including itself, then re-enter fresh
             }
-            // avoid multiple copies of the same destination when reselecting the same item
             launchSingleTop = true
         }
     }
@@ -29,14 +30,24 @@ class MainNavigationActions(private val navController: NavHostController) {
     fun navigateToCustomize() {
         navController.navigate(Customize) {
             launchSingleTop = true
-            restoreState = true
         }
     }
 
     fun navigateToTranslate() {
         navController.navigate(Translate) {
+            popUpTo(ScreenTranslate) {
+                inclusive = false // keep ScreenTranslate in back stack
+            }
+            launchSingleTop = true // avoid duplicate Translate screens
+        }
+    }
+
+    fun navigateToAbout() {
+        navController.navigate(About) {
+            popUpTo(ScreenTranslate) {
+                inclusive = false
+            }
             launchSingleTop = true
-            restoreState = true
         }
     }
 }
