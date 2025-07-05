@@ -13,6 +13,8 @@
     <string name="screen_translate_icon">Screen Translate icon</string>
     <string name="translate">Translate</string>
     <string name="translate_icon">Translate icon</string>
+    <string name="about">About</string>
+    <string name="about_icon">About icon</string>
 
     <!-- ScreenTranslateScreen -->
     <string name="draw_overlay_permission_request_title">

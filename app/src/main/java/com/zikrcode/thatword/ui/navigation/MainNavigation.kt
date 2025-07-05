@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.zikrcode.thatword.ui.about.AboutScreen
 import com.zikrcode.thatword.ui.screen_translate.ScreenTranslateScreen
 import com.zikrcode.thatword.ui.screen_translate.customize.CustomizeScreen
 import com.zikrcode.thatword.ui.translate.TranslateScreen
@@ -29,6 +30,7 @@ fun MainNavigation(modifier: Modifier = Modifier) {
         when {
             navDestination.hasRoute(ScreenTranslate::class) -> ScreenTranslate
             navDestination.hasRoute(Customize::class) -> Customize
+            navDestination.hasRoute(About::class) -> About
             else -> Translate
         }
     } ?: startDestination
@@ -46,6 +48,9 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 },
                 onNavigateToTranslate = {
                     navActions.navigateToTranslate()
+                },
+                onNavigateToAbout = {
+                    navActions.navigateToAbout()
                 },
                 closeDrawer = {
                     coroutineScope.launch { drawerState.close() }
@@ -68,6 +73,13 @@ fun MainNavigation(modifier: Modifier = Modifier) {
             )
             composable<Translate> {
                 TranslateScreen(
+                    onOpenDrawer = {
+                        coroutineScope.launch { drawerState.open() }
+                    }
+                )
+            }
+            composable<About> {
+                AboutScreen(
                     onOpenDrawer = {
                         coroutineScope.launch { drawerState.open() }
                     }
