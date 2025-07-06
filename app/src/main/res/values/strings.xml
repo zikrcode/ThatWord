@@ -48,8 +48,22 @@
         <string name="text_color">Text color</string>
         <string name="background_color">Background color</string>
         <string name="select_color">Select color</string>
-        <string name="uppercase_text">Uppercase text</string>"
+        <string name="uppercase_text">Uppercase text</string>
         <string name="icon_style">Icon Style</string>
         <string name="icon_color">Icon color</string>
+
+    <!-- AboutScreen -->
+    <string name="app_info">App Info</string>
+    <string name="app_version">Version: %s</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="view_privacy_policy">View Privacy Policy</string>
+    <string name="developer">Developer</string>
+    <string name="developer_name">Zokirjon Mamadjonov</string>
+    <string name="developer_info">Hi! I’m %s, an independent developer who loves creating helpful and thoughtful apps. Thanks for using the app. I hope it brings something helpful to your day 💙</string>
+    <string name="support">Support</string>
+    <string name="feedback">Feedback</string>
+    <string name="share_feedback_description">Have a suggestion or found a bug? I\'d love to hear from you!</string>
+    <string name="share_feedback">Share Feedback</string>
+    <string name="share_feedback_subject">Feedback on %s</string>
 
 </resources>

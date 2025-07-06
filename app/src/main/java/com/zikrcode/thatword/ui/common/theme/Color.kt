@@ -19,6 +19,7 @@ object AppColor {
     val PARADISE_PINK = Color(0xFFE94B5B)
     val BLACK = Color.Black
     val LIGHT_GRAY = Color.LightGray
+    val BLUE = Color(0xFF0077b6)
 
     val selectableColorsArgb = setOf(
         BLACK, Color.DarkGray, Color.Gray, Color.LightGray, Color.White,
