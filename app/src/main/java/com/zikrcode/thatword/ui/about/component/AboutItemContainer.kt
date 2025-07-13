@@ -40,7 +40,7 @@ fun AboutItemContainer(
 private fun AboutItemContainerPreview() {
     AppTheme {
         Box(
-            modifier = Modifier.background(AppTheme.colorScheme.container)
+            modifier = Modifier.background(AppTheme.colorScheme.background)
         ) {
             AboutItemContainer(
                 label = "Label",

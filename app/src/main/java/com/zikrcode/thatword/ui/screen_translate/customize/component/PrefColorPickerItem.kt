@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppBottomSheet
 import com.zikrcode.thatword.ui.common.theme.AppColor
@@ -56,32 +55,36 @@ fun PrefColorPickerItem(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(StyleItemHeight)
-            .clickable { showBottomSheet = true }
-            .padding(horizontal = Dimens.SpacingSingleHalf),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .clickable { showBottomSheet = true },
     ) {
-        Text(
-            text = text,
-            color = AppTheme.colorScheme.text,
-            fontSize = 18.sp,
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Box(
+        Row(
             modifier = Modifier
-                .clip(CircleShape)
-                .border(
-                    width = 2.dp,
-                    color = AppTheme.colorScheme.text,
-                    shape = CircleShape
-                )
-                .background(Color(colorArgb))
-                .size(Dimens.SpacingQuadruple)
-        )
+                .fillMaxWidth()
+                .height(StyleItemHeight)
+                .padding(horizontal = Dimens.SpacingDoubleHalf),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                color = AppTheme.colorScheme.text,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .border(
+                        width = 2.dp,
+                        color = AppTheme.colorScheme.icon,
+                        shape = CircleShape
+                    )
+                    .background(Color(colorArgb))
+                    .size(Dimens.SpacingTriple)
+            )
+        }
     }
 
     val colorsArgb = AppColor.selectableColorsArgb
@@ -158,7 +161,7 @@ private fun CircularColorButton(
 private fun PrefColorPickerItemPreview() {
     AppTheme {
         Box(
-            modifier = Modifier.background(AppTheme.colorScheme.background)
+            modifier = Modifier.background(AppTheme.colorScheme.container)
         ) {
             PrefColorPickerItem(
                 text = "Label",

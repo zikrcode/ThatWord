@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -16,12 +15,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
-val StyleItemHeight = 60.dp
+val StyleItemHeight = 50.dp
 
 @Composable
 fun PrefWithLabelContainer(
@@ -29,29 +27,21 @@ fun PrefWithLabelContainer(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(Dimens.SpacingDouble)
-            )
-            .background(AppTheme.colorScheme.container),
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            color = AppTheme.colorScheme.text,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
+        AppVerticalSpacer(Dimens.SpacingDoubleHalf)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens.SpacingDouble)
-        ) {
-            Text(
-                text = label,
-                color = AppTheme.colorScheme.main,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium
-            )
-            AppVerticalSpacer(Dimens.SpacingDouble)
-            content()
-        }
+                .clip(RoundedCornerShape(Dimens.SpacingSingleHalf))
+                .background(AppTheme.colorScheme.container),
+            content = content
+        )
     }
 }
 

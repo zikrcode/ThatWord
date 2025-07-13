@@ -77,9 +77,9 @@ fun CentralBoxCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(Dimens.SpacingQuadruple)
+            .padding(Dimens.SpacingDoubleHalf)
             .height(boxHeight)
-            .clip(RoundedCornerShape(Dimens.SpacingDouble))
+            .clip(RoundedCornerShape(Dimens.SpacingSingleHalf))
             .background(boxColor),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -89,7 +89,7 @@ fun CentralBoxCard(
             modifier = Modifier.padding(Dimens.SpacingQuadruple)
         )
         AnimatedVisibility(visible = expanded) {
-            AppHorizontalDivider(Modifier.padding(horizontal = Dimens.SpacingQuadruple))
+            AppHorizontalDivider(Modifier.padding(horizontal = Dimens.SpacingDoubleHalf))
         }
 
         if (languageSelectorsHeight > 0.dp) { // to make sure it is not clickable when height is 0
