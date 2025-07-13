@@ -16,11 +16,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppContentLoading
-import com.zikrcode.thatword.ui.common.composables.AppHorizontalDivider
 import com.zikrcode.thatword.ui.common.composables.AppTopBar
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefColorPickerItem
-import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefSwitchItem
+import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefCheckboxItem
 import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefWithLabelContainer
 import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
@@ -91,8 +90,8 @@ private fun CustomizeContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = Dimens.SpacingDouble),
-                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingDouble),
+                    .padding(horizontal = Dimens.SpacingDoubleHalf),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingQuintuple),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconStyleSection(
@@ -125,16 +124,12 @@ private fun IconStyleSection(
     iconColorArgb: Int,
     onIconColorArgbChange: (Int) -> Unit
 ) {
-    PrefWithLabelContainer(
-        label = stringResource(R.string.icon_style)
-    ) {
-        AppHorizontalDivider()
+    PrefWithLabelContainer(label = stringResource(R.string.icon_style)) {
         PrefColorPickerItem(
             text = stringResource(R.string.icon_color),
             colorArgb = iconColorArgb,
             onColorArgbChange = onIconColorArgbChange
         )
-        AppHorizontalDivider()
     }
 }
 
@@ -147,27 +142,21 @@ private fun TextStyleSection(
     uppercaseText: Boolean,
     onUppercaseTextChange: (Boolean) -> Unit
 ) {
-    PrefWithLabelContainer(
-        label = stringResource(R.string.text_style)
-    ) {
-        AppHorizontalDivider()
+    PrefWithLabelContainer(label = stringResource(R.string.text_style)) {
         PrefColorPickerItem(
             text = stringResource(R.string.text_color),
             colorArgb = textColorArgb,
             onColorArgbChange = onTextColorArgbChange
         )
-        AppHorizontalDivider()
         PrefColorPickerItem(
             text = stringResource(R.string.background_color),
             colorArgb = textBackgroundColorArgb,
             onColorArgbChange = onTextBackgroundColorArgbChange
         )
-        AppHorizontalDivider()
-        PrefSwitchItem(
+        PrefCheckboxItem(
             text = stringResource(R.string.uppercase_text),
             checked = uppercaseText,
             onCheckedChange = onUppercaseTextChange
         )
-        AppHorizontalDivider()
     }
 }

@@ -34,8 +34,8 @@ fun CustomizeBoxCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(Dimens.SpacingQuadruple)
-            .clip(RoundedCornerShape(Dimens.SpacingDouble))
+            .padding(Dimens.SpacingDoubleHalf)
+            .clip(RoundedCornerShape(Dimens.SpacingSingleHalf))
             .background(AppTheme.colorScheme.container)
             .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
