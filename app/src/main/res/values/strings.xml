@@ -11,8 +11,8 @@
     <!-- MainDrawer -->
     <string name="screen_translate">Screen Translate</string>
     <string name="screen_translate_icon">Screen Translate icon</string>
-    <string name="translate">Translate</string>
-    <string name="translate_icon">Translate icon</string>
+    <string name="extract_text">Extract Text</string>
+    <string name="extract_text_icon">Extract Text icon</string>
     <string name="about">About</string>
     <string name="about_icon">About icon</string>
 
