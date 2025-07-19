@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.translate
+package com.zikrcode.thatword.ui.extract_text
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,24 +17,24 @@ import com.zikrcode.thatword.ui.common.composables.AppTopBar
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 
 @Composable
-fun TranslateScreen(onOpenDrawer: () -> Unit) {
-    TranslateScreenContent(onOpenDrawer)
+fun ExtractTextScreen(onOpenDrawer: () -> Unit) {
+    ExtractTextScreenContent(onOpenDrawer)
 }
 
 @PreviewLightDark
 @Composable
-private fun TranslateScreenContentPreview() {
+private fun ExtractTextScreenContentPreview() {
     AppTheme {
-        TranslateScreenContent { }
+        ExtractTextScreenContent { }
     }
 }
 
 @Composable
-private fun TranslateScreenContent(onOpenDrawer: () -> Unit) {
+private fun ExtractTextScreenContent(onOpenDrawer: () -> Unit) {
     Scaffold(
         topBar = {
             AppTopBar(
-                title = stringResource(R.string.translate),
+                title = stringResource(R.string.extract_text),
                 navIcon = painterResource(R.drawable.ic_menu),
                 navIconDescription = stringResource(R.string.open_drawer),
                 onNavIconClick = onOpenDrawer
@@ -50,7 +50,7 @@ private fun TranslateScreenContent(onOpenDrawer: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "TranslateScreenContent",
+                text = "ExtractTextScreenContent",
                 color = AppTheme.colorScheme.text
             )
         }

@@ -47,7 +47,7 @@ fun MainDrawer(
     drawerState: DrawerState,
     currentRoute: Any,
     onNavigateToScreenTranslate: () -> Unit,
-    onNavigateToTranslate: () -> Unit,
+    onNavigateToExtractText: () -> Unit,
     onNavigateToAbout: () -> Unit,
     closeDrawer: () -> Unit
 ) {
@@ -73,12 +73,12 @@ fun MainDrawer(
             iconContentDescriptionRes = R.string.screen_translate_icon
         )
         ModalDrawerItem(
-            labelRes = R.string.translate,
-            selected = currentRoute == Translate,
-            onClick = onNavigateToTranslate,
+            labelRes = R.string.extract_text,
+            selected = currentRoute == ExtractText,
+            onClick = onNavigateToExtractText,
             closeDrawer = closeDrawer,
-            iconRes = R.drawable.ic_translate,
-            iconContentDescriptionRes = R.string.translate_icon
+            iconRes = R.drawable.ic_extract_text,
+            iconContentDescriptionRes = R.string.extract_text_icon
         )
         Spacer(Modifier.weight(1f))
         AppHorizontalDivider(Modifier.padding(horizontal = Dimens.SpacingSingleHalf))
@@ -99,7 +99,7 @@ private fun MainDrawerPreview() {
             drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
             currentRoute = ScreenTranslate,
             onNavigateToScreenTranslate = { },
-            onNavigateToTranslate = { },
+            onNavigateToExtractText = { },
             onNavigateToAbout = { },
             closeDrawer = { }
         )

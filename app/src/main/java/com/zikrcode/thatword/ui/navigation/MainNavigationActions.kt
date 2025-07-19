@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable object Customize
 
 // Route
-@Serializable object Translate
+@Serializable object ExtractText
 
 // Route
 @Serializable object About
@@ -33,12 +33,12 @@ class MainNavigationActions(private val navController: NavHostController) {
         }
     }
 
-    fun navigateToTranslate() {
-        navController.navigate(Translate) {
+    fun navigateToExtractText() {
+        navController.navigate(ExtractText) {
             popUpTo(ScreenTranslate) {
                 inclusive = false // keep ScreenTranslate in back stack
             }
-            launchSingleTop = true // avoid duplicate Translate screens
+            launchSingleTop = true // avoid duplicate ExtractText screens
         }
     }
 

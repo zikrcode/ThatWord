@@ -18,7 +18,7 @@ import androidx.navigation.navigation
 import com.zikrcode.thatword.ui.about.AboutScreen
 import com.zikrcode.thatword.ui.screen_translate.ScreenTranslateScreen
 import com.zikrcode.thatword.ui.screen_translate.customize.CustomizeScreen
-import com.zikrcode.thatword.ui.translate.TranslateScreen
+import com.zikrcode.thatword.ui.extract_text.ExtractTextScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -28,10 +28,10 @@ fun MainNavigation(modifier: Modifier = Modifier) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.let { navDestination ->
         when {
-            navDestination.hasRoute(ScreenTranslate::class) -> ScreenTranslate
             navDestination.hasRoute(Customize::class) -> Customize
+            navDestination.hasRoute(ExtractText::class) -> ExtractText
             navDestination.hasRoute(About::class) -> About
-            else -> Translate
+            else -> ScreenTranslate
         }
     } ?: startDestination
     val navActions = remember(navController) { MainNavigationActions(navController) }
@@ -46,8 +46,8 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                 onNavigateToScreenTranslate = {
                     navActions.navigateToScreenTranslate()
                 },
-                onNavigateToTranslate = {
-                    navActions.navigateToTranslate()
+                onNavigateToExtractText = {
+                    navActions.navigateToExtractText()
                 },
                 onNavigateToAbout = {
                     navActions.navigateToAbout()
@@ -71,8 +71,8 @@ fun MainNavigation(modifier: Modifier = Modifier) {
                     coroutineScope.launch { drawerState.open() }
                 }
             )
-            composable<Translate> {
-                TranslateScreen(
+            composable<ExtractText> {
+                ExtractTextScreen(
                     onOpenDrawer = {
                         coroutineScope.launch { drawerState.open() }
                     }
