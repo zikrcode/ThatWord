@@ -3,8 +3,6 @@ package com.zikrcode.thatword.ui.screen_translate.customize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,8 +13,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zikrcode.thatword.R
-import com.zikrcode.thatword.ui.common.composables.AppContentLoading
-import com.zikrcode.thatword.ui.common.composables.AppTopBar
+import com.zikrcode.thatword.ui.common.composables.AppScreenContent
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefColorPickerItem
 import com.zikrcode.thatword.ui.screen_translate.customize.component.PrefCheckboxItem
@@ -68,53 +65,38 @@ private fun CustomizeContent(
     uppercaseText: Boolean,
     onEvent: (CustomizeUiEvent) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            AppTopBar(
-                title = stringResource(R.string.customize),
-                navIcon = painterResource(R.drawable.ic_arrow_back),
-                navIconDescription = stringResource(R.string.navigate_back),
-                onNavIconClick = onBack
+    AppScreenContent(
+        navIcon = painterResource(R.drawable.ic_arrow_back),
+        navIconDescription = stringResource(R.string.navigate_back),
+        onNavIconClick = onBack,
+        title = stringResource(R.string.customize),
+        loading = isLoading
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SpacingQuintuple),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            IconStyleSection(
+                iconColorArgb = iconColorArgb,
+                onIconColorArgbChange = { argb ->
+                    onEvent.invoke(CustomizeUiEvent.ChangeIconColor(argb))
+                }
             )
-        },
-        containerColor = AppTheme.colorScheme.background
-    ) { paddingValues ->
-        if (isLoading) {
-            AppContentLoading(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+            TextStyleSection(
+                textColorArgb = textColorArgb,
+                onTextColorArgbChange = { argb ->
+                    onEvent.invoke(CustomizeUiEvent.ChangeTextColor(argb))
+                },
+                textBackgroundColorArgb = textBackgroundColorArgb,
+                onTextBackgroundColorArgbChange = { argb ->
+                    onEvent.invoke(CustomizeUiEvent.ChangeTextBackgroundColor(argb))
+                },
+                uppercaseText = uppercaseText,
+                onUppercaseTextChange = { uppercase ->
+                    onEvent.invoke(CustomizeUiEvent.ChangeUppercaseText(uppercase))
+                }
             )
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = Dimens.SpacingDoubleHalf),
-                verticalArrangement = Arrangement.spacedBy(Dimens.SpacingQuintuple),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                IconStyleSection(
-                    iconColorArgb = iconColorArgb,
-                    onIconColorArgbChange = { argb ->
-                        onEvent.invoke(CustomizeUiEvent.ChangeIconColor(argb))
-                    }
-                )
-                TextStyleSection(
-                    textColorArgb = textColorArgb,
-                    onTextColorArgbChange = { argb ->
-                        onEvent.invoke(CustomizeUiEvent.ChangeTextColor(argb))
-                    },
-                    textBackgroundColorArgb = textBackgroundColorArgb,
-                    onTextBackgroundColorArgbChange = { argb ->
-                        onEvent.invoke(CustomizeUiEvent.ChangeTextBackgroundColor(argb))
-                    },
-                    uppercaseText = uppercaseText,
-                    onUppercaseTextChange = { uppercase ->
-                        onEvent.invoke(CustomizeUiEvent.ChangeUppercaseText(uppercase))
-                    }
-                )
-            }
         }
     }
 }

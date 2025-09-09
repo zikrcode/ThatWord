@@ -1,4 +1,4 @@
-package com.zikrcode.thatword.ui.screen_translate.service.component
+package com.zikrcode.thatword.ui.common.composables
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -29,7 +29,7 @@ private const val Duration = NumberOfDots * DelayUnit
 private val DotSize = Dimens.SpacingSingle
 
 @Composable
-fun DotsPulsingLoading(
+fun AppDotsPulsingLoading(
     colorArgb: Int,
     modifier: Modifier = Modifier
 ) {
@@ -76,9 +76,9 @@ private fun animateScaleWithDelay(delay: Int): State<Float> {
 
 @PreviewLightDark
 @Composable
-private fun DotsPulsingLoadingPreview() {
+private fun AppDotsPulsingLoadingPreview() {
     AppTheme {
-        DotsPulsingLoading(
+        AppDotsPulsingLoading(
             colorArgb = AppTheme.colorScheme.main.toArgb()
         )
     }

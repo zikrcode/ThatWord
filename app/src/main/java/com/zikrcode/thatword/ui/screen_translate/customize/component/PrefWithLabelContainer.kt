@@ -6,16 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
+import com.zikrcode.thatword.ui.common.extension.appClipRoundedCorner
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
@@ -38,7 +37,7 @@ fun PrefWithLabelContainer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(Dimens.SpacingSingleHalf))
+                .appClipRoundedCorner()
                 .background(AppTheme.colorScheme.container),
             content = content
         )

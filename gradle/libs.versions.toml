@@ -21,6 +21,7 @@ lifecycleUtilitiesCompose = "2.8.7"
 mlKitTextRecognition = "16.0.1"
 mlKitTranslate = "17.0.3"
 datastorePreferences = "1.1.6"
+coilCompose = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ ml-kit-text-recognition = { group = "com.google.mlkit", name = "text-recognition
 ml-kit-translate = { group = "com.google.mlkit", name = "translate", version.ref = "mlKitTranslate" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

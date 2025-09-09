@@ -3,26 +3,23 @@ package com.zikrcode.thatword.ui.screen_translate.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
+import com.zikrcode.thatword.ui.common.extension.appClipRoundedCorner
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 
@@ -34,8 +31,7 @@ fun CustomizeBoxCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(Dimens.SpacingDoubleHalf)
-            .clip(RoundedCornerShape(Dimens.SpacingSingleHalf))
+            .appClipRoundedCorner()
             .background(AppTheme.colorScheme.container)
             .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
@@ -62,15 +58,8 @@ fun CustomizeBoxCard(
 @Composable
 private fun AppearanceBoxCardPreview() {
     AppTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(AppTheme.colorScheme.background),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            CustomizeBoxCard(
-                onClick = { }
-            )
-        }
+        CustomizeBoxCard(
+            onClick = { }
+        )
     }
 }
