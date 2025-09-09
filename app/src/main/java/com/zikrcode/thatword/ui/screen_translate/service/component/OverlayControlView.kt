@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -32,6 +31,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
+import com.zikrcode.thatword.ui.common.composables.AppDotsPulsingLoading
+import com.zikrcode.thatword.ui.common.extension.appClipCircle
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
@@ -75,7 +76,7 @@ fun OverlayControlView(
         Box(
             modifier = modifier
                 .size(60.dp)
-                .clip(CircleShape)
+                .appClipCircle()
                 .border(
                     width = 2.dp,
                     color = Color(iconColorArgb),
@@ -94,7 +95,7 @@ fun OverlayControlView(
             contentAlignment = Alignment.Center
         ) {
             if (translating) {
-                DotsPulsingLoading(iconColorArgb)
+                AppDotsPulsingLoading(iconColorArgb)
             } else {
                 Icon(
                     painter = painterResource(R.drawable.icon),
@@ -118,7 +119,7 @@ private fun SmallCircleButton(
     Box(
         modifier = modifier
             .size(30.dp)
-            .clip(CircleShape)
+            .appClipCircle()
             .border(
                 width = 2.dp,
                 color = mainColor,

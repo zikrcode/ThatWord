@@ -10,8 +10,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,10 +30,10 @@ import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Permissions
 import com.zikrcode.thatword.ui.common.composables.AppAlertDialog
-import com.zikrcode.thatword.ui.common.composables.AppContentLoading
-import com.zikrcode.thatword.ui.common.composables.AppTopBar
+import com.zikrcode.thatword.ui.common.composables.AppScreenContent
 import com.zikrcode.thatword.ui.screen_translate.component.CustomizeBoxCard
 import com.zikrcode.thatword.ui.screen_translate.component.CentralBoxCard
+import com.zikrcode.thatword.utils.Dimens
 
 @Composable
 fun ScreenTranslateScreen(
@@ -93,68 +91,57 @@ private fun ScreenTranslateScreenContent(
         mutableStateOf(false)
     }
 
-    Scaffold(
-        topBar = {
-            AppTopBar(
-                title = stringResource(R.string.screen_translate),
-                navIcon = painterResource(R.drawable.ic_menu),
-                navIconDescription = stringResource(R.string.open_drawer),
-                onNavIconClick = onOpenDrawer
-            )
-        },
-        containerColor = AppTheme.colorScheme.background
-    ) { paddingValues ->
-        if (isLoading) {
-            AppContentLoading(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            )
-        } else {
-            if (languages.isEmpty() || inputLanguage == null || outputLanguage == null) {
-                // in real scenario we should have all content when isLoading is false but to prevent NPE
-                return@Scaffold
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CentralBoxCard(
-                    expanded = isServiceRunning,
-                    onClick = {
-                        when {
-                            isServiceRunning -> {
-                                onEvent.invoke(ScreenTranslateUiEvent.StopService)
-                            }
-                            Permissions.checkDrawOverlayPermission(context) -> {
-                                startServiceWithMediaProjection = true
-                            }
-                            else -> {
-                                requestDrawOverlayPermission = true
-                            }
+    AppScreenContent(
+        navIcon = painterResource(R.drawable.ic_menu),
+        navIconDescription = stringResource(R.string.open_drawer),
+        onNavIconClick = onOpenDrawer,
+        title = stringResource(R.string.screen_translate),
+        loading = isLoading
+    ) {
+        if (languages.isEmpty() || inputLanguage == null || outputLanguage == null) {
+            // in real scenario we should have all content when isLoading is false but to prevent NPE
+            return@AppScreenContent
+        }
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(
+                space = Dimens.SpacingDoubleHalf,
+                alignment = Alignment.CenterVertically
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CentralBoxCard(
+                expanded = isServiceRunning,
+                onClick = {
+                    when {
+                        isServiceRunning -> {
+                            onEvent.invoke(ScreenTranslateUiEvent.StopService)
                         }
-                    },
-                    languages = languages,
-                    inputLanguage = inputLanguage,
-                    outputLanguage = outputLanguage,
-                    onLanguageChange = { language, direction ->
-                        onEvent.invoke(
-                            ScreenTranslateUiEvent.ChangeLanguage(
-                                language = language,
-                                direction = direction
-                            )
-                        )
-                    },
-                    onSwapLanguage = {
-                        onEvent.invoke(ScreenTranslateUiEvent.SwapLanguages)
+                        Permissions.checkDrawOverlayPermission(context) -> {
+                            startServiceWithMediaProjection = true
+                        }
+                        else -> {
+                            requestDrawOverlayPermission = true
+                        }
                     }
-                )
-                AnimatedVisibility(visible = isServiceRunning) {
-                    CustomizeBoxCard(onClick = onOpenCustomize)
+                },
+                languages = languages,
+                inputLanguage = inputLanguage,
+                outputLanguage = outputLanguage,
+                onLanguageChange = { language, direction ->
+                    onEvent.invoke(
+                        ScreenTranslateUiEvent.ChangeLanguage(
+                            language = language,
+                            direction = direction
+                        )
+                    )
+                },
+                onSwapLanguage = {
+                    onEvent.invoke(ScreenTranslateUiEvent.SwapLanguages)
                 }
+            )
+            AnimatedVisibility(visible = isServiceRunning) {
+                CustomizeBoxCard(onClick = onOpenCustomize)
             }
         }
     }

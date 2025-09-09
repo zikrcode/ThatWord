@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -34,13 +32,13 @@ import com.zikrcode.thatword.BuildConfig
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.ui.about.component.AboutItemContainer
 import com.zikrcode.thatword.ui.common.composables.AppHorizontalDivider
-import com.zikrcode.thatword.ui.common.composables.AppTopBar
 import com.zikrcode.thatword.ui.common.composables.AppVerticalSpacer
 import com.zikrcode.thatword.ui.common.theme.AppColor
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.utils.Dimens
 import androidx.core.net.toUri
+import com.zikrcode.thatword.ui.common.composables.AppScreenContent
 
 @Composable
 fun AboutScreen(onOpenDrawer: () -> Unit) {
@@ -57,22 +55,14 @@ private fun AboutScreenContentPreview() {
 
 @Composable
 private fun AboutScreenContent(onOpenDrawer: () -> Unit) {
-    Scaffold(
-        topBar = {
-            AppTopBar(
-                title = stringResource(R.string.about),
-                navIcon = painterResource(R.drawable.ic_menu),
-                navIconDescription = stringResource(R.string.open_drawer),
-                onNavIconClick = onOpenDrawer
-            )
-        },
-        containerColor = AppTheme.colorScheme.background
-    ) { paddingValues ->
+    AppScreenContent(
+        navIcon = painterResource(R.drawable.ic_menu),
+        navIconDescription = stringResource(R.string.open_drawer),
+        onNavIconClick = onOpenDrawer,
+        title = stringResource(R.string.about)
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = Dimens.SpacingDoubleHalf),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(Dimens.SpacingDoubleHalf)
         ) {
             AppInfoAboutItem()

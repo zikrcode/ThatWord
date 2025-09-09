@@ -51,6 +51,12 @@
         <string name="uppercase_text">Uppercase text</string>
         <string name="icon_style">Icon Style</string>
         <string name="icon_color">Icon color</string>
+    
+    <!-- ExtractTextScreen -->
+    <string name="take_image">Take image</string>
+    <string name="select_image">Select image</string>
+    <string name="extract_text_action">Extract text</string>
+    <string name="view_results">View results</string>
 
     <!-- AboutScreen -->
     <string name="app_info">App Info</string>

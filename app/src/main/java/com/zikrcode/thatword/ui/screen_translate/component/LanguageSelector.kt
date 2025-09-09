@@ -31,8 +31,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.domain.models.Language
 import com.zikrcode.thatword.ui.common.composables.AppBottomSheet
+import com.zikrcode.thatword.ui.common.extension.appClipCircle
+import com.zikrcode.thatword.ui.common.extension.appShadowElevation
 import com.zikrcode.thatword.ui.common.theme.AppTheme
 import com.zikrcode.thatword.utils.Dimens
 import kotlinx.coroutines.launch
@@ -72,11 +72,8 @@ fun LanguageSelector(
                 width = LanguageSelectorWidth,
                 height = LanguageSelectorHeight
             )
-            .shadow(
-                elevation = Dimens.ElevationSingleHalf,
-                shape = CircleShape
-            )
-            .clip(CircleShape)
+            .appShadowElevation(CircleShape)
+            .appClipCircle()
             .clickable {
                 showBottomSheet = true
             }
