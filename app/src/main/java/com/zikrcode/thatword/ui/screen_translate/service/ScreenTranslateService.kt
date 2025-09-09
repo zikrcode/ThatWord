@@ -11,9 +11,9 @@ import android.os.IBinder
 import androidx.compose.ui.graphics.ImageBitmap
 import com.zikrcode.thatword.R
 import com.zikrcode.thatword.data.repository.UserRepository
+import com.zikrcode.thatword.ui.utils.AppConstants
 import com.zikrcode.thatword.ui.utils.MediaProjectionToken
 import com.zikrcode.thatword.ui.utils.Notifications
-import com.zikrcode.thatword.utils.AppConstants
 import com.zikrcode.thatword.utils.extensions.parcelable
 import com.zikrcode.thatword.ui.utils.OverlayService
 import dagger.hilt.android.AndroidEntryPoint

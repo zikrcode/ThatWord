@@ -5,6 +5,7 @@ import com.zikrcode.thatword.domain.models.Language
 import com.zikrcode.thatword.ui.common.theme.AppColor
 
 object AppConstants {
+    const val SCREEN_TRANSLATE_CHANNEL_ID = "SCREEN_TRANSLATE_CHANNEL_ID"
     const val PRIVACY_POLICY_URL = "https://zikrcode-privacy-policies.web.app/projects/that_word.html"
     const val LINKEDIN_URL = "https://www.linkedin.com/in/zokirjon"
     const val BUY_ME_A_COFFEE_URL = "https://buymeacoffee.com/zikrcode"
