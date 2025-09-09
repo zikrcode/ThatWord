@@ -14,4 +14,10 @@ plugins {
 
     // Hilt Plugin
     alias(libs.plugins.hilt.plugin) apply false
+
+    // Google Services
+    alias(libs.plugins.google.services.plugin) apply false
+
+    // Firebase Crashlytics
+    alias(libs.plugins.firebase.crashlytics.plugin) apply false
 }
