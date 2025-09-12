@@ -13,6 +13,12 @@ plugins {
 
     // Hilt Plugin
     alias(libs.plugins.hilt.plugin)
+
+    // Google Services
+    alias(libs.plugins.google.services.plugin)
+
+    // Firebase Crashlytics
+    alias(libs.plugins.firebase.crashlytics.plugin)
 }
 
 android {
@@ -106,4 +112,9 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }
